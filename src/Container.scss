@@ -1,0 +1,30 @@
+@use 'App';
+@mixin flex-layout($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin debug-color($theme:auqa) {
+  background: $theme;
+}
+
+
+#footer {
+  width: 100%;
+  height: 5%;
+  @include debug-color(red);
+  @include flex-layout;
+}
+.footer-item {
+  width:20%;
+  height: 100%;
+  @include flex-layout(column)
+}
+#main {
+  width:100%;
+  height: 95%;
+  @include debug-color;
+}
+
