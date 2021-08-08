@@ -1,5 +1,7 @@
 @import "Container";
-$primary-color: #333;
+@import "Icon.css";
+@import "./account/view/Charge";
+$primary-color: #fff;
 
 
 html, body, #root, #app{

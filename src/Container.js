@@ -7,7 +7,8 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import Detail from "./account/view/detail";
+import Detail from "./account/view/Detail";
+import Charge from "./account/view/Charge";
 
 const types = [1,2,3,4,5,6,7]
 const allData = React.createContext(null)
@@ -117,7 +118,7 @@ const Container = () => {
                 <Switch>
                         <Route path="/my">my</Route>
                         <Route path="/others">others</Route>
-                        <Route path="/account">account</Route>
+                        <Route path="/account"><Charge/></Route>
                         <Route path="/graph">graph</Route>
                         <Route path="/"><Detail data={mockData}/></Route>
                 </Switch>

@@ -1,0 +1,9 @@
+@import "../../Config";
+.charge-title{
+@include flex-direction-column;
+}
+.charge-title-content{
+@include flex-direction-row;
+  justify-content: space-between;
+  width: 80%;
+}
