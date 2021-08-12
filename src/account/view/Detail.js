@@ -1,10 +1,11 @@
 import React from 'react';
+import {textApp, textType,textCountOut,textCountIn} from "../../Config";
 
 const Detail = ({data}) => {
     console.log(data)
     console.log("data?")
     return (
-        <div>
+        <div className="detail-container">
             <DetailHeader/>
             <DetailContent data={data}/>
         </div>
@@ -13,12 +14,9 @@ const Detail = ({data}) => {
 
 const DetailHeader = () => {
 
-    const DetailHeader_title = "i生活记账"
-    const DetailHeader_month = () => {}
-
     return (
         <div className= "detail-header_container">
-            <div className="detail-header_title">{DetailHeader_title}</div>
+            <div className="detail-header_title">{textApp}</div>
         </div>
     )
 }
@@ -42,11 +40,11 @@ const DetailContent = ({data}) => {
         }
             )
         return (
-            <div>
-                <div>
-                    <span>{item}</span>
-                    {itemNum["countIn"]!==0?<span>收入:{itemNum["countIn"]}</span>:null}
-                    {itemNum["countOut"]!==0?<span>支出:{itemNum["countOut"]}</span>:null}
+            <div className="detail-content_container_2">
+                <div className="detail-content_total">
+                    <span className="detail-content_total_month">{item}</span>
+                    {itemNum["countIn"]!==0?<span className="detail-content_total_inout">{textCountIn}:{itemNum["countIn"]}</span>:null}
+                    {itemNum["countOut"]!==0?<span className="detail-content_total_inout">{textCountOut}:{itemNum["countOut"]}</span>:null}
                 </div>
                 {detailContentComponentItem}
             </div>
@@ -56,9 +54,10 @@ const DetailContent = ({data}) => {
     )
 
         return (
-            <div>
+            <div className="detail-content_container">
                 {detailContentComponent}
-        </div>)
+            </div>
+        )
 }
 
 
