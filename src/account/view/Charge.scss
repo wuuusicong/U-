@@ -7,3 +7,17 @@
   justify-content: space-between;
   width: 80%;
 }
+.charge-title_container{
+  width: 100%;
+}
+.charge-title_button{
+  @include flex-direction-row;
+  flex-wrap: wrap;
+}
+.charge-content-container {
+  padding: 20px;
+  width: 25%;
+  @include flex-direction-column;
+  .charge-content-icon{
+  }
+}
