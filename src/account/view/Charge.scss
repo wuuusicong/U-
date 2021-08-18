@@ -21,3 +21,24 @@
   .charge-content-icon{
   }
 }
+//.am-list-body {
+//  border: none;
+//  text-align: center;
+//  @include flex-direction-row;
+//  flex-wrap: wrap;
+//  justify-content: center;
+//  align-items: center;
+//}
+.popup-list{
+  height: 210px;
+  overflow: auto;
+}
+.am-modal-mask {
+  opacity: 0.1;
+}
+.text-type_icon{
+  font-size: 40px;
+}
+.charge-input-date{
+  margin-bottom: 10px;
+}

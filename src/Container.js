@@ -1,5 +1,6 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 // import Footer from "./Footer";
+import {fetchUrl, formatData} from "./Config"
 
 import {
     BrowserRouter as Router,
@@ -9,6 +10,7 @@ import {
 } from "react-router-dom";
 import Detail from "./account/view/Detail";
 import Charge from "./account/view/Charge";
+import axios from "axios";
 
 const types = [1,2,3,4,5,6,7]
 const allData = React.createContext(null)
@@ -86,7 +88,18 @@ const Container = () => {
 
 
 
-    let [mockData,setMockData] = useState(initMockData);
+    let [mockData,setMockData] = useState({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const result = await axios(fetchUrl["data"])
+            const resultData = result["data"]["data"]
+            console.log(resultData)
+            setMockData(resultData)
+        }
+        fetchData();
+    },[])
+
     const Footer = () => {
         const LinkDiv = FooterUrl.map((item, index) =>
             <div className="footer-item" key={index}>

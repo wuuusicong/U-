@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
-import {textApp, textType,textCountOut,textCountIn, formatInOut} from "../../Config";
+import {textApp, textType, textTypeIcon, textCountOut, textCountIn, formatInOut, formatDate, formatData} from "../../Config";
 import {Button, DatePicker, List} from 'antd-mobile';
 
 const Detail = ({data}) => {
-    console.log(data)
-    console.log("data?")
+    const dataResult = formatData(data)
+    console.log(dataResult)
+    console.log("dataResult")
     return (
         <div className="detail-container">
             <DetailHeader/>
-            <DetailContent data={data}/>
+            <DetailContent data={dataResult}/>
         </div>
     )
 }
@@ -17,14 +18,6 @@ const DetailMonthInOut = () => {
     const nowTimeStamp = Date.now();
     const now = new Date(nowTimeStamp);
     let [nowDate,setNowDate] = useState(now)
-    function formatDate(date) {
-        /* eslint no-confusing-arrow: 0 */
-        const pad = n => n < 10 ? `0${n}` : n;
-        const dateStr = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-        const yearStr = `${date.getFullYear()}`;
-        const monthStr = `${pad(date.getMonth() + 1)}`;
-        return {yearStr,monthStr}
-    }
 
     let {yearStr,monthStr} = formatDate(nowDate)
     return (
@@ -69,15 +62,18 @@ const DetailContent = ({data}) => {
 
     const detailContentComponent = Object.keys(data).map((item,index)=>
     {
-        let itemNum = {"countIn":0,"countOut":0};
+        let itemNum = {"支出":0,"收入":0};
         const detailContentComponentItem = data[item].map((item2,index2)=>
         {
             console.log(item2)
             console.log("item2")
-            itemNum[item2["type"]] += item2[item2["type"]]
+            itemNum[item2["typeInOut"]] += parseInt(item2["count"])
+            console.log(itemNum)
+            const iconClassNameEn = textTypeIcon[item2["typeInOut"]][textType[item2["typeInOut"]].indexOf(item2["type"])]
+            const iconClassName = `iconfont icon-${iconClassNameEn} detail-content_component_icon`
             return (
                 <List.Item arrow="empty" className="detail-content_componentItem">
-                    <span className="detail-content_component_icon">{item2["sourceType"]}</span>
+                    <i className={iconClassName}></i>
                     <span className="detail-content_component_description">{item2["description"]}</span>
                     <span className="detail-content_component_count">{formatInOut(item2)}</span>
                 </List.Item>
@@ -96,8 +92,8 @@ const DetailContent = ({data}) => {
             <div className="detail-content_container_2">
                 <div className="detail-content_total">
                     <span className="detail-content_total_month">{item}</span>
-                    {itemNum["countIn"]!==0?<span className="detail-content_total_inout">{textCountIn}:{itemNum["countIn"]}</span>:null}
-                    {itemNum["countOut"]!==0?<span className="detail-content_total_inout">{textCountOut}:{itemNum["countOut"]}</span>:null}
+                    {itemNum["收入"]!==0?<span className="detail-content_total_inout">{textCountIn}:{itemNum["收入"]}</span>:null}
+                    {itemNum["支出"]!==0?<span className="detail-content_total_inout">{textCountOut}:{itemNum["支出"]}</span>:null}
                 </div>
                 <List className="date-picker-list" style={{ backgroundColor: 'white' }}>
                     {detailContentComponentItem}
