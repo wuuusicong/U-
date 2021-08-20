@@ -69,7 +69,7 @@ const Container = () => {
 
 
 
-    let [fresh,setFresh] = useState(true);
+    let [fresh,setFresh] = useState([true]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -80,7 +80,7 @@ const Container = () => {
             setMockData(resultData)
         }
         fetchData();
-    },[])
+    }, fresh)
 
     const Footer = () => {
         const LinkDiv = FooterUrl.map((item, index) =>
@@ -114,7 +114,7 @@ const Container = () => {
                     <Switch>
                         <Route path="/my">my</Route>
                         <Route path="/others">others</Route>
-                        <Route path="/account"><Charge fresh={{fresh, setFresh}}/></Route>
+                        <Route path="/account"><Charge /></Route>
                         <Route path="/graph">graph</Route>
                         <Route path="/"><Detail data={mockData} fresh={fresh}/></Route>
                     </Switch>

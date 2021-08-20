@@ -34,6 +34,7 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
     let {yearStr, monthStr, dayStr, dateStr} = formatDate(nowDate)
 
     let history = useHistory()
+    const {fresh, setFresh} = useContext(dataFresh);
 
     const onSubmit = async () => {
         onCloseModal();
@@ -55,10 +56,10 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
             }
         }
         await fetchSaveData()
-
         history.push("/")
-        // console.log(!fresh)
-        // console.log(fresh)
+        console.log(fresh)
+        console.log("fresh")
+        setFresh([!fresh[0]])
         // setFresh(!fresh)
     }
 

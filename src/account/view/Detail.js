@@ -97,10 +97,14 @@ const DetailContent = ({data}) => {
             itemNum[item2["typeInOut"]] += parseFloat(item2["count"])
             console.log(itemNum)
             const iconClassNameEn = textTypeIcon[item2["typeInOut"]][textType[item2["typeInOut"]].indexOf(item2["type"])]
-            const iconClassName = `iconfont icon-${iconClassNameEn} detail-content_component_icon`
+            const iconClassName = `iconfont icon-${iconClassNameEn} detail-content_component_iconfont`
             return (
                 <List.Item arrow="empty" className="detail-content_componentItem">
-                    <i className={iconClassName}></i>
+                    <span className="detail-content_component_icon_container">
+                        <div className="detail-content_component_icon">
+                            <i className={iconClassName}></i>
+                        </div>
+                    </span>
                     <span className="detail-content_component_description">{item2["description"]}</span>
                     <span className="detail-content_component_count">{formatInOut(item2)}</span>
                 </List.Item>
@@ -119,8 +123,10 @@ const DetailContent = ({data}) => {
             <div className="detail-content_container_2">
                 <div className="detail-content_total">
                     <span className="detail-content_total_month">{item}</span>
-                    {itemNum["收入"]!==0?<span className="detail-content_total_inout">{textCountIn}:{itemNum["收入"]}</span>:null}
-                    {itemNum["支出"]!==0?<span className="detail-content_total_inout">{textCountOut}:{itemNum["支出"]}</span>:null}
+                    <span className="detail-content_total_inout">
+                        {itemNum["收入"]!==0?<span>{textCountIn}:{itemNum["收入"]}</span>:null}
+                        {itemNum["支出"]!==0?<span>{textCountOut}:{itemNum["支出"]}</span>:null}
+                    </span>
                 </div>
                 <List className="date-picker-list" style={{ backgroundColor: 'white' }}>
                     {detailContentComponentItem}
