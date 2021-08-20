@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const textApp = "i生活记账";
+import React from "react";
+const textApp = "i生活记账-mobile";
 const textCountIn = "收入";
 const textCountOut = "支出";
 const textFooter = ["明细", "图表", "记账", "其他", "我的"]
@@ -16,6 +16,7 @@ const textTypeIcon = {
         'ziyuan', 'gongzi', 'jianzhi', 'licai',
         'ziyuan']
 };
+const footerIcon = ['mingxi', 'Diagram', 'jiahao', 'zhishi', 'usercenter']
 
 const typeInOut = [textCountOut,textCountIn];
 
@@ -57,6 +58,10 @@ const formatData = (data) => {
         resultIndex.push(item["date"])
     })
     resultIndex = Array.from(new Set(resultIndex))
+    console.log(resultIndex)
+    console.log("resultIndex")
+    resultIndex = sortData(resultIndex)
+    console.log(resultIndex)
     for (let i=0; i<resultIndex.length; i++) {
         result[resultIndex[i]] = []
     }
@@ -65,6 +70,21 @@ const formatData = (data) => {
     })
     return result;
 }
+
+const sortData = (monthData) => {
+    function splitDateDay(data) {
+        return parseInt(data.split("-")[2])
+    }
+    function sortDay(x, y) {
+        if (splitDateDay(x)>splitDateDay(y)) return -1;
+        else if (splitDateDay(x)<splitDateDay(y)) return 1;
+        else return 0;
+    }
+    return monthData.sort(sortDay)
+}
+
+const dataFresh = React.createContext(null)
+
 
 const fetchUrl = {"save": 'https://qcluj6.fn.thelarkcloud.com/hello', "data": "https://qcluj6.fn.thelarkcloud.com/getAccountData"}
 export {
@@ -81,5 +101,8 @@ export {
     formatDate,
     saveData,
     fetchUrl,
-    formatData
+    formatData,
+    dataFresh,
+    footerIcon,
+    sortData
 }

@@ -1,6 +1,6 @@
 import React,{useState, useEffect} from 'react';
 // import Footer from "./Footer";
-import {fetchUrl, formatData} from "./Config"
+import {fetchUrl, formatData, dataFresh, footerIcon} from "./Config"
 
 import {
     BrowserRouter as Router,
@@ -13,31 +13,8 @@ import Charge from "./account/view/Charge";
 import axios from "axios";
 
 const types = [1,2,3,4,5,6,7]
-const allData = React.createContext(null)
 
 
-// const initMockData =
-//     {
-//         "20210807":[{
-//             sourceType:1,
-//             count:10.23,
-//             description:"晚饭",
-//             moneyType:true
-//         },
-//             {
-//                 sourceType:1,
-//                 count:10.23,
-//                 description:"晚饭",
-//                 moneyType:true
-//             },
-//             {
-//                 sourceType:1,
-//                 count:10.23,
-//                 description:"晚饭",
-//                 moneyType:false
-//             }
-//         ]
-//     }
 const initMockData =
     {
         "20210807":
@@ -90,11 +67,16 @@ const Container = () => {
 
     let [mockData,setMockData] = useState({});
 
+
+
+    let [fresh,setFresh] = useState(true);
+
     useEffect(() => {
         const fetchData = async () => {
             const result = await axios(fetchUrl["data"])
             const resultData = result["data"]["data"]
-            console.log(resultData)
+            // console.log(resultData)
+            console.log("触发了effect没")
             setMockData(resultData)
         }
         fetchData();
@@ -104,11 +86,12 @@ const Container = () => {
         const LinkDiv = FooterUrl.map((item, index) =>
             <div className="footer-item" key={index}>
                 <Link to={item}>
-                    {FooterText[index]}
+                    <i className={'footer-item-icon iconfont icon-'+footerIcon[index]}></i>
+                    <div>
+                        {FooterText[index]}
+                    </div>
                 </Link>
             </div>)
-
-
         return (
                 <div id="footer">
                     {LinkDiv}
@@ -123,21 +106,22 @@ const Container = () => {
     //     )
     // }
 
-
     return (
         <div id="app">
+            <dataFresh.Provider value={{fresh, setFresh, mockData}}>
             <Router>
-                <div id="main">
-                <Switch>
+                    <div id="main">
+                    <Switch>
                         <Route path="/my">my</Route>
                         <Route path="/others">others</Route>
-                        <Route path="/account"><Charge/></Route>
+                        <Route path="/account"><Charge fresh={{fresh, setFresh}}/></Route>
                         <Route path="/graph">graph</Route>
-                        <Route path="/"><Detail data={mockData}/></Route>
-                </Switch>
+                        <Route path="/"><Detail data={mockData} fresh={fresh}/></Route>
+                    </Switch>
                 </div>
                 <Footer/>
             </Router>
+            </dataFresh.Provider>
         </div>
     )
 }

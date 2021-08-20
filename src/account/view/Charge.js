@@ -1,5 +1,5 @@
-import React,{useState, useRef} from "react";
-import {textType, textCountOut, textCountIn, textTypeIcon, formatDate, typeInOut, fetchUrl} from "../../Config";
+import React,{useState, useContext} from "react";
+import {dataFresh, textType, textCountOut, textCountIn, textTypeIcon, formatDate, typeInOut, fetchUrl} from "../../Config";
 import { createForm } from 'rc-form';
 import {
     Tabs,
@@ -16,14 +16,13 @@ import {
     DatePicker
 } from 'antd-mobile';
 import axios from "axios";
-
+import {useHistory} from "react-router-dom";
 
 
 const tabs = [
     { title: <Badge >{textCountOut}</Badge> },
     { title: <Badge >{textCountIn}</Badge> },
 ];
-const textTypeIconOut = textTypeIcon[textCountOut];
 
 const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, iconText}) => {
     const {getFieldProps} = form;
@@ -34,7 +33,9 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
 
     let {yearStr, monthStr, dayStr, dateStr} = formatDate(nowDate)
 
-    const onSubmit = () => {
+    let history = useHistory()
+
+    const onSubmit = async () => {
         onCloseModal();
         console.log("form")
         let formData = form.getFieldsValue()
@@ -53,7 +54,12 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
                 console.log(e)
             }
         }
-        fetchSaveData()
+        await fetchSaveData()
+
+        history.push("/")
+        // console.log(!fresh)
+        // console.log(fresh)
+        // setFresh(!fresh)
     }
 
     return (
@@ -106,16 +112,19 @@ const TextTypeOutButtonAll = ({initTypeInOut, iconData, iconText}) => {
     const onCloseModal = () => {
         setModal(false);
     }
+    const onTurnModal = () => {
+        setModal(true);
+    }
 
     let [initType,setinitType] = useState("")
 
-    let textInitType = initType;
-
     const onClickIcon = (v) => {
         const iconType = v.target.getAttribute("data-icon")
+        onTurnModal()
         setModal(true)
+        console.log("onClickIncon")
+        console.log(modal)
         setinitType(iconType)
-        console.log(initType)
         // textInitType = textType[textTypeIconOut][textTypeIconOut.indexOf(initType)]
     }
 
@@ -157,33 +166,8 @@ const TextTypeOutButtonAll = ({initTypeInOut, iconData, iconText}) => {
 
 
 
-const TextTypeInButtonAll = () => {
 
-    let [modal2,setmodal2] = useState(false)
-
-    const textTypeInButton = textTypeIcon[textCountIn].map((item,index) => {
-        return (
-                <div className="charge-content-container" >
-                    <Modal visible={modal2}
-                           onClose={()=>setmodal2(false)}
-                           animationType="slide-up"
-                           afterClose={() => { alert('afterClose'); }}
-                    >
-                        <div>我显示出来了</div>
-                    </Modal>
-                    <Icon  type={item} size="lg" className="iconfont icon-zhanweifu charge-content-icon"></Icon>
-                    <div>{textType[textCountIn][index]}</div>
-                </div>
-        )
-    })
-    return (
-        <div className="charge-title_button">
-            {textTypeInButton}
-        </div>
-    )
-}
-
-const Charge = () => {
+const Charge = ({fresh}) => {
     let [initTypeInOut, setInitTypeInOut] = useState(0)
 
     const ChargeTitle = () => {

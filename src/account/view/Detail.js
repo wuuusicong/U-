@@ -1,16 +1,26 @@
-import React, {useState} from 'react';
-import {textApp, textType, textTypeIcon, textCountOut, textCountIn, formatInOut, formatDate, formatData} from "../../Config";
+import React, {useState, useContext} from 'react';
+import {
+    textApp,
+    textType,
+    textTypeIcon,
+    textCountOut,
+    textCountIn,
+    formatInOut,
+    formatDate,
+    formatData,
+    dataFresh
+} from "../../Config";
 import {Button, DatePicker, List} from 'antd-mobile';
 
 const Detail = ({data}) => {
     const dataResult = formatData(data)
-    console.log(dataResult)
-    console.log("dataResult")
+    const dateResultLength = Object.keys(dataResult).length;
+    if(dateResultLength===0) return null;
     return (
-        <div className="detail-container">
-            <DetailHeader/>
-            <DetailContent data={dataResult}/>
-        </div>
+            <div className="detail-container">
+                <DetailHeader  />
+                <DetailContent data={dataResult}/>
+            </div>
     )
 }
 
@@ -20,29 +30,46 @@ const DetailMonthInOut = () => {
     let [nowDate,setNowDate] = useState(now)
 
     let {yearStr,monthStr} = formatDate(nowDate)
+
+    const {mockData} = useContext(dataFresh)
+
+    let itemNum = {"支出":0,"收入":0};
+    let filterMockData = mockData.filter((item, index) => {
+        if((item["dateYear"]+item["dateMonth"]) === (yearStr + monthStr)) return true;
+            })
+    filterMockData.forEach((item, index) => {
+        itemNum[item["typeInOut"]] += parseFloat(item["count"])
+    })
+
+    const dateChange = (date) => {
+        setNowDate(date)
+    }
+
     return (
         <div className="detail-monthInOut_container">
-            <div>
+            <div className="detail-monthInOut_container2">
                 <DatePicker
                     mode="month"
                     title="Select Date"
                     extra="Optional"
                     value={nowDate}
-                    onChange={date => setNowDate(date)}
+                    onChange={dateChange}
                 >
-                    <div>
-                        <div>{yearStr}</div>
-                        <div>{monthStr}</div>
+                    <div className="detail-monthInOut_left">
+                        <div >{yearStr}</div>
+                        <div className="detail-monthInOut_in">{monthStr+'月'}<i className="iconfont icon-xia"></i></div>
                     </div>
                 </DatePicker>
             </div>
-            <div>
-                <div>收入</div>
-                <div>0.00</div>
-            </div>
-            <div>
-                <div>支出</div>
-                <div>1320.99</div>
+            <div className="detail-monthInOut_right">
+                <div >
+                    <div >收入</div>
+                    <div>{itemNum["收入"]}</div>
+                </div>
+                <div>
+                    <div>支出</div>
+                    <div>{itemNum["支出"]}</div>
+                </div>
             </div>
         </div>
     )
@@ -65,9 +92,9 @@ const DetailContent = ({data}) => {
         let itemNum = {"支出":0,"收入":0};
         const detailContentComponentItem = data[item].map((item2,index2)=>
         {
-            console.log(item2)
-            console.log("item2")
-            itemNum[item2["typeInOut"]] += parseInt(item2["count"])
+            // console.log(item2)
+            // console.log("item2")
+            itemNum[item2["typeInOut"]] += parseFloat(item2["count"])
             console.log(itemNum)
             const iconClassNameEn = textTypeIcon[item2["typeInOut"]][textType[item2["typeInOut"]].indexOf(item2["type"])]
             const iconClassName = `iconfont icon-${iconClassNameEn} detail-content_component_icon`
