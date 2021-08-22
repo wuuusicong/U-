@@ -1,6 +1,7 @@
 import React,{useState, useContext} from "react";
-import {dataFresh, textType, textCountOut, textCountIn, textTypeIcon, formatDate, typeInOut, fetchUrl} from "../../Config";
+import {DataFresh, textType, textCountOut, textCountIn, textTypeIcon, formatDate, typeInOut} from "../../Config";
 import { createForm } from 'rc-form';
+import {fetchUrl} from "../FetchData"
 import {
     Tabs,
     WhiteSpace,
@@ -34,7 +35,7 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
     let {yearStr, monthStr, dayStr, dateStr} = formatDate(nowDate)
 
     let history = useHistory()
-    const {fresh, setFresh} = useContext(dataFresh);
+    const {fresh, setFresh} = useContext(DataFresh);
 
     const onSubmit = async () => {
         onCloseModal();
@@ -48,7 +49,7 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
         formData["typeInOut"] = typeInOut[initTypeInOut]
         const fetchSaveData = async () => {
             try{
-                const result = await axios.post(fetchUrl["save"],formData)
+                const result = await axios.post(fetchUrl["save"], formData)
                 console.log(result)
                 console.log("result")
             }catch (e) {
@@ -182,7 +183,6 @@ const Charge = ({fresh}) => {
                     {typeInOut.map((item, index) =>
                         <TextTypeOutButtonAll initTypeInOut={initTypeInOut} iconData={textTypeIcon[item]} iconText={textType[item]}/>
                     )}
-                    {/*<TextTypeInButtonAll/>*/}
                 </Tabs>
             </div>
         )

@@ -1,6 +1,6 @@
 import React,{useState, useEffect} from 'react';
 // import Footer from "./Footer";
-import {fetchUrl, formatData, dataFresh, footerIcon} from "./Config"
+import {fetchUrl, formatData, DataFresh, footerIcon} from "./Config"
 
 import {
     BrowserRouter as Router,
@@ -62,25 +62,9 @@ const initMockData =
 const Container = () => {
     const FooterText = ["明细", "图表", "记账", "其他", "我的"]
     const FooterUrl = ["/", "/graph", "/account", "/others", "/my"]
-
-
-
-    let [mockData,setMockData] = useState({});
-
-
-
     let [fresh,setFresh] = useState([true]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await axios(fetchUrl["data"])
-            const resultData = result["data"]["data"]
-            // console.log(resultData)
-            console.log("触发了effect没")
-            setMockData(resultData)
-        }
-        fetchData();
-    }, fresh)
+
 
     const Footer = () => {
         const LinkDiv = FooterUrl.map((item, index) =>
@@ -108,7 +92,7 @@ const Container = () => {
 
     return (
         <div id="app">
-            <dataFresh.Provider value={{fresh, setFresh, mockData}}>
+            <DataFresh.Provider value={{fresh, setFresh}}>
             <Router>
                     <div id="main">
                     <Switch>
@@ -116,12 +100,12 @@ const Container = () => {
                         <Route path="/others">others</Route>
                         <Route path="/account"><Charge /></Route>
                         <Route path="/graph">graph</Route>
-                        <Route path="/"><Detail data={mockData} fresh={fresh}/></Route>
+                        <Route path="/"><Detail fresh={{fresh, setFresh}}/></Route>
                     </Switch>
                 </div>
                 <Footer/>
             </Router>
-            </dataFresh.Provider>
+            </DataFresh.Provider>
         </div>
     )
 }

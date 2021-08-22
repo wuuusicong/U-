@@ -20,7 +20,7 @@ $font-size-20px: 20px;
   text-align: center;
   font-size: $font-size-20px;
 }
-.detail-header_container {
+.detail-header_container{
   width: 100%;
   //margin-bottom: 10px;
   background: $footer-color;
@@ -29,7 +29,6 @@ $font-size-20px: 20px;
   width: 30%;
 }
 .detail-monthInOut_left {
-
   @include flex-direction-column;
   align-items: flex-start;
   padding-left: 20px;
@@ -48,15 +47,18 @@ $font-size-20px: 20px;
   @include flex-direction-row;
   .detail-content_total_month {
     margin-left: 10px;
-    width: 70%;
+    width: 50%;
   }
 }
 .detail-content_total_inout{
   font-size: $font-size-10px;
-  width: 30%;
+  width: 50%;
   @include flex-direction-row;
-  justify-content: space-between;
-  padding-right: 5%;
+  justify-content: flex-end;
+  //padding-right: 5%;
+  span {
+    margin-right: 20px;
+  }
 }
 .detail-content_container{
   width: 100%;
@@ -118,4 +120,14 @@ $font-size-20px: 20px;
 }
 .am-list-content {
   @include flex-direction-row
+}
+.detail-content_nodata{
+  width: 100%;
+  @include flex-direction-column;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+}
+.detail-content_nodata_icon{
+  font-size: 100px;
 }

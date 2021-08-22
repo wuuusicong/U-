@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
     textApp,
     textType,
@@ -8,41 +8,79 @@ import {
     formatInOut,
     formatDate,
     formatData,
-    dataFresh
+    DataFresh,
 } from "../../Config";
+import {fetchData} from "../FetchData";
 import {Button, DatePicker, List} from 'antd-mobile';
+import axios from "axios";
 
-const Detail = ({data}) => {
-    const dataResult = formatData(data)
-    const dateResultLength = Object.keys(dataResult).length;
-    if(dateResultLength===0) return null;
-    return (
-            <div className="detail-container">
-                <DetailHeader  />
-                <DetailContent data={dataResult}/>
-            </div>
-    )
-}
+const DateContext = React.createContext(null);
+const DataContext = React.createContext({});
 
-const DetailMonthInOut = () => {
+const Detail = () => {
+
     const nowTimeStamp = Date.now();
     const now = new Date(nowTimeStamp);
-    let [nowDate,setNowDate] = useState(now)
+    let [detailDate, setDetailDate] = useState(now)
+    let {yearStr, monthStr} = formatDate(detailDate)
 
-    let {yearStr,monthStr} = formatDate(nowDate)
+    let [mockData, setMockData] = useState({});
+    const {fresh, setFresh} = useContext(DataFresh);
 
-    const {mockData} = useContext(dataFresh)
+    useEffect(() => {
+        fetchData(setMockData, {"dateYear":yearStr, "dateMonth":monthStr})
+    }, fresh)
+
+
+    const dataResult = formatData(mockData)
+    const dateResultLength = Object.keys(dataResult).length;
+
+    return (
+        <DateContext.Provider value={{detailDate, setDetailDate}}>
+            <DataContext.Provider value={{mockData, setMockData}}>
+            <div className="detail-container">
+                <DetailHeader date={{yearStr,monthStr}}/>
+                {dateResultLength!==0? <DetailContent data={dataResult}/>:<DetailNoData/>}
+            </div>
+            </DataContext.Provider>
+        </DateContext.Provider>
+    )
+}
+const DetailNoData = () =>{
+    return <div className="detail-content_nodata">
+        <i className="iconfont icon-zanwushuju detail-content_nodata_icon"></i>
+        <div className="detail-content_nodata_text">暂无数据</div>
+    </div>
+}
+
+const DetailMonthInOut = ({date}) => {
+
+    const {fresh, setFresh} = useContext(DataFresh);
+
+    let {yearStr,monthStr} = date
+
+    const {detailDate, setDetailDate} = useContext(DateContext)
+
+
+    console.log(useContext(DataContext))
+    const {mockData, setMockData} = useContext(DataContext)
 
     let itemNum = {"支出":0,"收入":0};
-    let filterMockData = mockData.filter((item, index) => {
-        if((item["dateYear"]+item["dateMonth"]) === (yearStr + monthStr)) return true;
-            })
-    filterMockData.forEach((item, index) => {
-        itemNum[item["typeInOut"]] += parseFloat(item["count"])
-    })
+    console.log(mockData)
+    console.log("mockData")
+    if (Object.keys(mockData).length!==0) {
+        let filterMockData = mockData.filter((item, index) => {
+            if((item["dateYear"]+item["dateMonth"]) === (yearStr + monthStr)) return true;
+        })
+        filterMockData.forEach((item, index) => {
+            itemNum[item["typeInOut"]] += parseFloat(item["count"])
+        })
+    }
+
 
     const dateChange = (date) => {
-        setNowDate(date)
+        setDetailDate(date)
+        setFresh([!fresh[0]])
     }
 
     return (
@@ -52,7 +90,7 @@ const DetailMonthInOut = () => {
                     mode="month"
                     title="Select Date"
                     extra="Optional"
-                    value={nowDate}
+                    value={detailDate}
                     onChange={dateChange}
                 >
                     <div className="detail-monthInOut_left">
@@ -75,11 +113,11 @@ const DetailMonthInOut = () => {
     )
 }
 
-const DetailHeader = () => {
+const DetailHeader = ({date}) => {
     return (
         <div className= "detail-header_container">
             <div className="detail-header_title">{textApp}</div>
-            <DetailMonthInOut/>
+            <DetailMonthInOut date={date}/>
         </div>
     )
 }
@@ -109,13 +147,6 @@ const DetailContent = ({data}) => {
                     <span className="detail-content_component_count">{formatInOut(item2)}</span>
                 </List.Item>
             )
-            // return (
-            //     <div className="detail-content_component">
-            //         <div className="detail-content_component_icon">{item2["sourceType"]}</div>
-            //         <div className="detail-content_component_description">{item2["description"]}</div>
-            //         <div className="detail-content_component_count">{item2["count"]}</div>
-            //     </div>
-            // )
         }
             )
 
@@ -124,8 +155,10 @@ const DetailContent = ({data}) => {
                 <div className="detail-content_total">
                     <span className="detail-content_total_month">{item}</span>
                     <span className="detail-content_total_inout">
-                        {itemNum["收入"]!==0?<span>{textCountIn}:{itemNum["收入"]}</span>:null}
-                        {itemNum["支出"]!==0?<span>{textCountOut}:{itemNum["支出"]}</span>:null}
+                        {/*<span>{itemNum["收入"]!==0? textCountIn + ':'+itemNum["收入"]:""}</span>*/}
+                        {/*<span>{itemNum["支出"]!==0?textCountOut + ':' + itemNum["支出"]:""}</span> */}
+                        {itemNum["收入"]!==0? <span>{textCountIn + ':'+itemNum["收入"]}</span>:null}
+                        {itemNum["支出"]!==0? <span>{textCountOut + ':'+itemNum["支出"]}</span>:null}
                     </span>
                 </div>
                 <List className="date-picker-list" style={{ backgroundColor: 'white' }}>

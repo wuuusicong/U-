@@ -11,9 +11,9 @@ const textType = {
 }
 const textTypeIcon = {
     "支出" : ['canyin', 'shopping', 'riyongpin', 'jiaotong', 'canyin', 'shopping', 'riyongpin', 'jiaotong','canyin', 'shopping', 'riyongpin', 'jiaotong',],
-    "收入" : ['gongzi', 'jianzhi', 'licai',
-        'ziyuan', 'gongzi', 'jianzhi', 'licai',
-        'ziyuan', 'gongzi', 'jianzhi', 'licai',
+    "收入" : ['gongzi1', 'jianzhi', 'licai',
+        'ziyuan', 'gongzi1', 'jianzhi', 'licai',
+        'ziyuan', 'gongzi1', 'jianzhi', 'licai',
         'ziyuan']
 };
 const footerIcon = ['mingxi', 'Diagram', 'jiahao', 'zhishi', 'usercenter']
@@ -83,7 +83,7 @@ const sortData = (monthData) => {
     return monthData.sort(sortDay)
 }
 
-const dataFresh = React.createContext(null)
+const DataFresh = React.createContext(null)
 
 
 const fetchUrl = {"save": 'https://qcluj6.fn.thelarkcloud.com/hello', "data": "https://qcluj6.fn.thelarkcloud.com/getAccountData"}
@@ -102,7 +102,7 @@ export {
     saveData,
     fetchUrl,
     formatData,
-    dataFresh,
+    DataFresh,
     footerIcon,
     sortData
 }
