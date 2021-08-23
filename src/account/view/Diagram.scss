@@ -25,9 +25,18 @@ $svg-bg-color: #ffffff;
   stroke: #000;
   stroke-width: 2px;
 }
+#svg-bar {
+  width: 100%;
+}
 .domain {
 }
 .tick {
   fill: none;
   stroke-width: 0;
+}
+#diagram-bar-chart-segment{
+  margin-top: 50px;
+  width: 100%;
+  height: 1px;
+  background: #2a2b2c;
 }

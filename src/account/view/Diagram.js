@@ -17,18 +17,18 @@ const Diagram = () => {
     let {yearStr, monthStr} = formatDate(detailDate)
 
     let [mockData, setMockData] = useState({});
-    const dataResult = formatData(mockData)
-    const dateResultLength = Object.keys(dataResult).length;
+
 
     useEffect(() => {
-        fetchData(setMockData, {"dateYear":yearStr, "dateMonth":monthStr})
+        fetchData(setMockData,{"dateYear":yearStr, "dateMonth":monthStr})
     }, [])
-
+    const dataResult = formatData(mockData)
+    const dateResultLength = Object.keys(dataResult).length;
 
     return (
         <div>
             <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod}/>
-            {dateResultLength!==0? <DiagramContent data={dataResult}/>:<DetailNoData/>}
+            {dateResultLength!==0? <DiagramContent data={dataResult} mockData={mockData}/>:<DetailNoData/>}
         </div>
     )
 }
@@ -62,14 +62,20 @@ const DiagramHeader = ({typeInOut, typePeriod}) => {
         </div>
     )
 }
-const DiagramContent = ({data}) => {
-    console.log(data)
-    console.log("data")
+const DiagramContent = ({data, mockData}) => {
+    const filterData = (mockData, filter) => {
+        return mockData.filter((item, index) => {
+            return item[filter["type"]] === filter["value"]
+        })
+    }
+    const barMockData = filterData(mockData, {"type":"typeInOut", "value":"支出"})
+    console.log(barMockData)
+    console.log("barMockData")
     return (
         <div>
             <div>本月</div>
             <DiagramLineChart data={data}/>
-            <DiagramBarChart data={data}/>
+            <DiagramBarChart data={barMockData}/>
         </div>
     )
 }
@@ -155,10 +161,81 @@ const drawLineChart = (dataY) => {
         .attr("dy","-0.2em")
         .attr("text-anchor","end")
 }
-const DiagramBarChart = () => {
+const DiagramBarChart = ({data}) => {
+
+    const barData = (data) => {
+        let dataType = [];
+        let dataTypeObj = {};
+        let dataResult = [];
+        let sum = 0;
+        data.forEach((item, index) => {
+            dataType.push(item["type"])
+        })
+        dataType = Array.from(new Set(dataType))
+        dataType.forEach((item, index) => {
+            dataTypeObj[item] = 0;
+        })
+            data.forEach((item2, index2) => {
+                dataTypeObj[item2["type"]] += parseFloat(item2["count"])
+            })
+        for (let key in dataTypeObj) {
+            sum += dataTypeObj[key];
+            dataResult.push({"name": key, "value": dataTypeObj[key]})
+        }
+        console.log(dataResult)
+        console.log("dataResult")
+        return dataResult
+    }
+    console.log(data)
+    console.log("data123")
+    const barDataValue = barData(data)
+    useEffect(() => {
+        drawBarChart(barDataValue)
+    },[])
     return (
-        <div>123</div>
+        <div>
+            <div id="diagram-bar-chart-segment"></div>
+            <svg id="svg-bar" className="diagram-svg_bar">123</svg>
+        </div>
     )
+}
+const drawBarChart = (initData) => {
+    const data = initData.sort((a, b) => b.value - a.value);
+    const svgBar = document.querySelector("#svg-bar")
+    const width = svgBar.clientWidth;
+    const itemHeight = 10
+    const paddingHeight = 80
+    const height = data.length * (itemHeight+paddingHeight);
+    const height2 = data.length * itemHeight;
+    d3.select("#svg-bar").attr("height", height);
+    const margin = {left:50, right:30, top:20, bottom:20}
+    const innerWidth = width - margin.left - margin.right;
+    // const innerHeight = height - margin.top - margin.bottom;
+    const g = d3.select("#svg-bar").append('g').attr('id', 'maingroup').attr('transform', `translate(0, ${margin.top})`)
+    const xScale = d3.scaleLinear().domain([0, d3.max(data, d => d.value)]).range([0, innerWidth]);
+    const yScale = d3.scaleBand().domain(data.map(d => d.name)).range([0, height]).padding(0.1);
+    // g.append("g")
+    //     .call(d3.axisBottom(xScale))
+    // const yAxis = d3.axisLeft(yScale);
+    data.forEach(d => {
+        g.append('rect')
+            .attr('width', xScale(d.value))
+            .attr('height', itemHeight)
+            .attr('fill', '#f5e279')
+            .attr("stroke-width", 0)
+            .attr("x", margin.left)
+            .attr('y', yScale(d.name));
+        g.append("text")
+            .attr("x",10)
+            .attr('y', yScale(d.name))
+            .attr('dy', "0.6em")
+            .text(d.name)
+        // g.append("symbol")
+        //     .attr("class","icon-icon icon-canyin")
+        //     .attr("id","icon-canyin")
+        //     .attr("viewBox", "0 0 20 20")
+    })
+
 }
 
 export default Diagram;
