@@ -11,6 +11,7 @@ import {
 import Detail from "./account/view/Detail";
 import Charge from "./account/view/Charge";
 import axios from "axios";
+import Diagram from "./account/view/Diagram";
 
 const types = [1,2,3,4,5,6,7]
 
@@ -98,8 +99,8 @@ const Container = () => {
                     <Switch>
                         <Route path="/my">my</Route>
                         <Route path="/others">others</Route>
-                        <Route path="/account"><Charge /></Route>
-                        <Route path="/graph">graph</Route>
+                        <Route path="/account"><Charge/></Route>
+                        <Route path="/graph"><Diagram/></Route>
                         <Route path="/"><Detail fresh={{fresh, setFresh}}/></Route>
                     </Switch>
                 </div>

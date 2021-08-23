@@ -85,6 +85,12 @@ const sortData = (monthData) => {
 
 const DataFresh = React.createContext(null)
 
+const DetailNoData = () =>{
+    return <div className="detail-content_nodata">
+        <i className="iconfont icon-zanwushuju detail-content_nodata_icon"></i>
+        <div className="detail-content_nodata_text">暂无数据</div>
+    </div>
+}
 
 const fetchUrl = {"save": 'https://qcluj6.fn.thelarkcloud.com/hello', "data": "https://qcluj6.fn.thelarkcloud.com/getAccountData"}
 export {
@@ -104,5 +110,6 @@ export {
     formatData,
     DataFresh,
     footerIcon,
-    sortData
+    sortData,
+    DetailNoData
 }

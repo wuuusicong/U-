@@ -1,3 +1,12 @@
+$footer-color: #f5e279;
+$icon-color: #171515;
+//$icon-border-color: #f3f3f0;
+$icon-border-color: #c4af90;
+$font-size-10px: 10px;
+$font-size-12px: 12px;
+$font-size-15px: 15px;
+$font-size-20px: 20px;
+$tint-color: #171712;
 @mixin flex-direction-row{
   display: flex;
   flex-direction: row;

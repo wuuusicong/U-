@@ -9,6 +9,7 @@ import {
     formatDate,
     formatData,
     DataFresh,
+    DetailNoData
 } from "../../Config";
 import {fetchData} from "../FetchData";
 import {Button, DatePicker, List} from 'antd-mobile';
@@ -46,12 +47,7 @@ const Detail = () => {
         </DateContext.Provider>
     )
 }
-const DetailNoData = () =>{
-    return <div className="detail-content_nodata">
-        <i className="iconfont icon-zanwushuju detail-content_nodata_icon"></i>
-        <div className="detail-content_nodata_text">暂无数据</div>
-    </div>
-}
+
 
 const DetailMonthInOut = ({date}) => {
 
@@ -69,10 +65,10 @@ const DetailMonthInOut = ({date}) => {
     console.log(mockData)
     console.log("mockData")
     if (Object.keys(mockData).length!==0) {
-        let filterMockData = mockData.filter((item, index) => {
-            if((item["dateYear"]+item["dateMonth"]) === (yearStr + monthStr)) return true;
-        })
-        filterMockData.forEach((item, index) => {
+        // let filterMockData = mockData.filter((item, index) => {
+        //     if((item["dateYear"]+item["dateMonth"]) === (yearStr + monthStr)) return true;
+        // })
+        mockData.forEach((item, index) => {
             itemNum[item["typeInOut"]] += parseFloat(item["count"])
         })
     }

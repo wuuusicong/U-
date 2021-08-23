@@ -1,0 +1,33 @@
+@import "../../Config";
+$svg-bg-color: #ffffff;
+.diagram-header {
+  background: $footer-color;
+}
+.diagram-header_inout {
+  width: 30%;
+  margin: auto;
+  padding-top: 10px;
+}
+.diagram-header_period {
+  width: 90%;
+  padding:10px 0 10px 0;
+  margin: auto;
+}
+.diagram-header_date {
+}
+.diagram-svg_line {
+  width: 100%;
+  height: 200px;
+  background: $svg-bg-color;
+}
+.svg-line-path{
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+}
+.domain {
+}
+.tick {
+  fill: none;
+  stroke-width: 0;
+}
