@@ -57,23 +57,26 @@
 .detail-content_container{
   width: 100%;
   overflow-y: scroll;
-  overflow-x: hidden;
+  //overflow-x: hidden;
   //margin-top: 2%;
 }
 .detail-content_container_2 {
-  width: 100%;
+  width: 90%;
+  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  margin: 20px 0 20px 0;
+  margin-top: 20px;
+  //@include margin-leftRight;
 }
 .detail-content_componentItem{
+  width: 100%;
   .detail-content_component_icon{
     width: 40px;
     height: 40px;
     border-radius:50%;
-    background:$icon-border-color;
+    background:$grey-icon-color;
   }
   .detail-content_component_iconfont{
     font-size: 25px;

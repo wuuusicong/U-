@@ -24,7 +24,9 @@ const tabs = [
     { title: <Badge >{textCountOut}</Badge> },
     { title: <Badge >{textCountIn}</Badge> },
 ];
-
+/*
+* ChargeInput 弹出的记账输入控件
+* 主要包括时间控件、两个输入组件、提交按钮 */
 const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, iconText}) => {
     const {getFieldProps} = form;
     const nowTimeStamp = Date.now();
@@ -100,9 +102,6 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
     )
 }
 const ChargeInputWrapper = createForm()(ChargeInput);
-
-
-
 
 
 

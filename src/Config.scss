@@ -7,6 +7,15 @@ $font-size-12px: 12px;
 $font-size-15px: 15px;
 $font-size-20px: 20px;
 $tint-color: #171712;
+$yellow-color: #fae46d;
+$blueBlack-footer-color: #181c28;
+$black-color: #191b28;
+$white-color: #ffffff;
+$white-font-color: #64676c;
+$grey-bg-color: #efefef;
+$pink-color: #fc676b;
+$grey-icon-color: #efeded;
+
 @mixin flex-direction-row{
   display: flex;
   flex-direction: row;
@@ -16,4 +25,8 @@ $tint-color: #171712;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+@mixin margin-leftRight {
+  margin-right: 10%;
 }
