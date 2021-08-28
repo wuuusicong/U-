@@ -37,11 +37,17 @@ $footer-color: white;
   .footer-item-icon {
     font-size: 25px;
   }
-  color: $white-color;
+  color: $white-font-color;
 }
 #main {
   width:100%;
   height: 92%;
-  @include debug-color;
 }
 
+.footer-item:nth-child(3){
+ a>i{
+   font-size: 40px;
+   color: $yellow-color;
+   padding-bottom: 10px;
+ }
+}

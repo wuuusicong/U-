@@ -42,6 +42,7 @@ const Detail = () => {
             <div className="detail-container">
                 <DetailHeader date={{yearStr,monthStr}}/>
                 {dateResultLength!==0? <DetailContent data={dataResult}/>:<DetailNoData/>}
+                {/*<DetailNoData/>*/}
             </div>
             </DataContext.Provider>
         </DateContext.Provider>
@@ -113,6 +114,8 @@ const DetailHeader = ({date}) => {
     return (
         <div className= "detail-header_container">
             <div className="detail-header_title">{textApp}</div>
+            {/*<i className="detail-header_icon iconfont icon-tubiaozhizuomoban "></i>*/}
+            <div className="detail-header_icon">{textApp}</div>
             <DetailMonthInOut date={date}/>
         </div>
     )
@@ -149,13 +152,13 @@ const DetailContent = ({data}) => {
         return (
             <div className="detail-content_container_2">
                 <div className="detail-content_total">
-                    <span className="detail-content_total_month">{item}</span>
-                    <span className="detail-content_total_inout">
+                    <div className="detail-content_total_month">{item}</div>
+                    <div className="detail-content_total_inout">
                         {/*<span>{itemNum["收入"]!==0? textCountIn + ':'+itemNum["收入"]:""}</span>*/}
                         {/*<span>{itemNum["支出"]!==0?textCountOut + ':' + itemNum["支出"]:""}</span> */}
-                        {itemNum["收入"]!==0? <span>{textCountIn + ':'+itemNum["收入"]}</span>:null}
-                        {itemNum["支出"]!==0? <span>{textCountOut + ':'+itemNum["支出"]}</span>:null}
-                    </span>
+                        {itemNum["收入"]!==0? <span>{textCountIn + ':'+itemNum["收入"]}</span>:<span></span>}
+                        {itemNum["支出"]!==0? <span>{textCountOut + ':'+itemNum["支出"]}</span>:<span></span>}
+                    </div>
                 </div>
                 <List className="date-picker-list" style={{ backgroundColor: 'white' }}>
                     {detailContentComponentItem}

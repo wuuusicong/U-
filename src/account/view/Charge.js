@@ -165,6 +165,11 @@ const TextTypeOutButtonAll = ({initTypeInOut, iconData, iconText}) => {
 }
 
 
+const TabStyle = {
+    "tabBarBackgroundColor":"#181c28",
+    "tabBarUnderlineStyle":"#fae46d",
+    "grey":"#8b8989"
+}
 
 
 
@@ -175,9 +180,13 @@ const Charge = ({fresh}) => {
         return (
             <div className="charge-title_container">
                 <Tabs tabs={tabs}
-                      initialPage={initTypeInOut}
-                      onChange={(tab, index) => { setInitTypeInOut(index);console.log('onChange', index, tab); }}
-                      onTabClick={(tab, index) => { console.log('onTabClick', index, tab); }}
+                      initialPage = {initTypeInOut}
+                      onChange = {(tab, index) => { setInitTypeInOut(index);console.log('onChange', index, tab); }}
+                      onTabClick = {(tab, index) => { console.log('onTabClick', index, tab); }}
+                      tabBarBackgroundColor = "#181c28"
+                      tabBarInactiveTextColor = {TabStyle["grey"]}
+                      tabBarUnderlineStyle ={{"border":"2px solid #fae46d"}}
+                      tabBarActiveTextColor = "#fff"
                 >
                     {typeInOut.map((item, index) =>
                         <TextTypeOutButtonAll initTypeInOut={initTypeInOut} iconData={textTypeIcon[item]} iconText={textType[item]}/>

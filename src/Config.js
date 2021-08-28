@@ -1,9 +1,9 @@
 import axios from "axios";
 import React from "react";
-const textApp = "i生活记账-mobile";
+const textApp = "i 记账 -mobile";
 const textCountIn = "收入";
 const textCountOut = "支出";
-const textFooter = ["明细", "图表", "记账", "其他", "我的"]
+const textFooter = ["明细", "图表", "", "其他", "我的"]
 const textFooterUrl = ["/", "/graph", "/account", "/others", "/my"]
 const textType = {
     "支出" : ["餐饮", "购物", "日用", "交通","餐饮", "购物", "日用", "交通","餐饮", "购物", "日用", "交通"],

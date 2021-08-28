@@ -26,7 +26,7 @@ const Diagram = () => {
     const dateResultLength = Object.keys(dataResult).length;
 
     return (
-        <div>
+        <div className="diagram-container">
             <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod}/>
             {dateResultLength!==0? <DiagramContent data={dataResult} mockData={mockData}/>:<DetailNoData/>}
         </div>
@@ -34,7 +34,7 @@ const Diagram = () => {
 }
 
 const DiagramHeader = ({typeInOut, typePeriod}) => {
-    const tintColor = '#171712';
+    const tintColor = '#fae46d';
 
     const onChange = (e) => {
         console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
@@ -72,8 +72,7 @@ const DiagramContent = ({data, mockData}) => {
     console.log(barMockData)
     console.log("barMockData")
     return (
-        <div>
-            <div>本月</div>
+        <div className="diagram-content">
             <DiagramLineChart data={data}/>
             <DiagramBarChart data={barMockData}/>
         </div>
@@ -109,7 +108,10 @@ const DiagramLineChart = ({data}) => {
         drawLineChart(dataY)
     }, [])
     return (
-        <svg className="diagram-svg_line" id="svg-line">LineChart</svg>
+        <div className="diagram-lineChart">
+            <div className="diagram-lineChart-title">本月</div>
+            <svg className="diagram-svg_line" id="svg-line"></svg>
+        </div>
     )
 }
 
@@ -186,8 +188,8 @@ const DiagramBarChart = ({data}) => {
         console.log("dataResult")
         return dataResult
     }
-    console.log(data)
-    console.log("data123")
+    // console.log(data)
+    // console.log("data123")
     const barDataValue = barData(data)
     useEffect(() => {
         drawBarChart(barDataValue)
@@ -195,7 +197,7 @@ const DiagramBarChart = ({data}) => {
     return (
         <div>
             <div id="diagram-bar-chart-segment"></div>
-            <svg id="svg-bar" className="diagram-svg_bar">123</svg>
+            <svg id="svg-bar" className="diagram-svg_bar"></svg>
         </div>
     )
 }

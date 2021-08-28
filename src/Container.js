@@ -1,6 +1,6 @@
 import React,{useState, useEffect} from 'react';
 // import Footer from "./Footer";
-import {fetchUrl, formatData, DataFresh, footerIcon} from "./Config"
+import {textFooter, formatData, DataFresh, footerIcon} from "./Config"
 
 import {
     BrowserRouter as Router,
@@ -61,7 +61,7 @@ const initMockData =
 
 
 const Container = () => {
-    const FooterText = ["明细", "图表", "记账", "其他", "我的"]
+    const FooterText = textFooter
     const FooterUrl = ["/", "/graph", "/account", "/others", "/my"]
     let [fresh,setFresh] = useState([true]);
 

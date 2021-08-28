@@ -1,7 +1,19 @@
 @import "../../Config";
 $svg-bg-color: #ffffff;
+.diagram-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.diagram-content{
+ @include content;
+}
 .diagram-header {
-  background: $footer-color;
+  background: $blueBlack-header-color;
+  height: $top-height;
+  width: 100%;
 }
 .diagram-header_inout {
   width: 30%;
@@ -15,11 +27,29 @@ $svg-bg-color: #ffffff;
 }
 .diagram-header_date {
 }
-.diagram-svg_line {
-  width: 100%;
-  height: 200px;
-  background: $svg-bg-color;
+.diagram-lineChart {
+  width: $card-width-90;
+  margin: auto;
+  margin-top: 20px;
+  height: 160px;
+  border-radius: $border-all-10px;
+  background: $white-font-color;
+  .diagram-lineChart-title{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: $font-size-15px;
+    font-weight: bold;
+  }
+  .diagram-svg_line {
+    width: 100%;
+    height: 90%;
+    padding-bottom: 1%;
+  }
 }
+
 .svg-line-path{
   fill: none;
   stroke: #000;
