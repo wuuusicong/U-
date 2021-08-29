@@ -7,8 +7,38 @@ $svg-bg-color: #ffffff;
   flex-direction: column;
   align-items: center;
 }
+
 .diagram-content{
  @include content;
+}
+.diagram-content-box{
+  width: $card-width;
+  height: 86%;
+  background: $white-font-color;
+  margin: auto;
+  border-radius: $border-all-10px;
+  padding-top: 20px;
+  //@include flex-direction-column;
+}
+.diagram-content-date{
+  height: 10%;
+  width: $card-width;
+  margin: auto;
+  @include flex-direction-row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.diagram-content-date-item{
+  width: 8%;
+  height: 60px;
+  margin-top: -5px;
+  border-radius: $border-all-10px;
+  background: $white-font-color;
+  color: $black-color;
+  font-weight: bold;
+  @include flex-direction-column;
+  justify-content: center;
+  align-items: center;
 }
 .diagram-header {
   background: $blueBlack-header-color;
@@ -30,43 +60,92 @@ $svg-bg-color: #ffffff;
 .diagram-lineChart {
   width: $card-width-90;
   margin: auto;
-  margin-top: 20px;
-  height: 160px;
+  height: 220px;
   border-radius: $border-all-10px;
-  background: $white-font-color;
+  background: $black-color;
+  @include flex-direction-column;
+  justify-content: center;
+  align-items: center;
   .diagram-lineChart-title{
-    width: 100%;
-    height: 10%;
-    display: flex;
+    width: 80%;
+    height:20%;
+    font-size: $font-size-20px;
+    font-weight: bold;
+    color:$white-font-color;
+    text-align: left;
+    @include flex-direction-column;
     justify-content: center;
     align-items: center;
-    font-size: $font-size-15px;
-    font-weight: bold;
+  }
+  .diagram-lineChart-line{
+    stroke: $white-font-color;
+    stroke-width: 2px;
+    stroke-dasharray: 5;
   }
   .diagram-svg_line {
-    width: 100%;
-    height: 90%;
-    padding-bottom: 1%;
+    width: 90%;
+    height: 80%;
+    //padding-bottom: 1%;
+  }
+  .diagram-lineChart-text{
+    fill: $white-font-color;
+    stroke-width: 1px;
+    font-size: 20px;
   }
 }
 
 .svg-line-path{
   fill: none;
-  stroke: #000;
-  stroke-width: 2px;
+  stroke: $yellow-lighter-color;
+  stroke-width: 3px;
 }
-#svg-bar {
-  width: 100%;
-}
+
 .domain {
+  stroke: $white-font-color;
+  text {
+
+  }
 }
 .tick {
   fill: none;
   stroke-width: 0;
+  text {
+    fill:$white-font-color
+  }
 }
-#diagram-bar-chart-segment{
-  margin-top: 50px;
-  width: 100%;
-  height: 1px;
-  background: #2a2b2c;
+
+
+
+
+
+
+//Bar chart style
+#svg-bar {
+ width: 100%;
+}
+.diagram-barChart {
+  width: $card-width-90;
+  margin: auto;
+  background: $blueBlack-header-color;
+  margin-top: 40px;
+  border-radius: $border-all-10px;
+}
+.diagram-svg_bar {
+}
+.diagram-lineChart-text{
+  fill: $white-font-color;
+}
+
+.diagram-barChart-title{
+  width: 80%;
+  height:20%;
+  font-size: $font-size-20px;
+  font-weight: bold;
+  color:$white-font-color;
+  text-align: left;
+  @include flex-direction-column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  padding-top: 10px;
 }

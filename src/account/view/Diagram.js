@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect}from "react";
 import {textCountOut, textCountIn, formatDate, DataFresh, formatData, DetailNoData} from "../../Config";
-import {List, SegmentedControl} from "antd-mobile";
+import {Radio, SegmentedControl} from "antd-mobile";
 import {tintColor} from "./Diagram.scss"
 import {fetchData} from "../FetchData";
 import *as d3 from "d3";
@@ -27,6 +27,7 @@ const Diagram = () => {
 
     return (
         <div className="diagram-container">
+
             <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod}/>
             {dateResultLength!==0? <DiagramContent data={dataResult} mockData={mockData}/>:<DetailNoData/>}
         </div>
@@ -34,7 +35,7 @@ const Diagram = () => {
 }
 
 const DiagramHeader = ({typeInOut, typePeriod}) => {
-    const tintColor = '#fae46d';
+    const tintColor = '#9a9a96';
 
     const onChange = (e) => {
         console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
@@ -63,6 +64,7 @@ const DiagramHeader = ({typeInOut, typePeriod}) => {
     )
 }
 const DiagramContent = ({data, mockData}) => {
+    const dateArray = [{"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}]
     const filterData = (mockData, filter) => {
         return mockData.filter((item, index) => {
             return item[filter["type"]] === filter["value"]
@@ -73,8 +75,19 @@ const DiagramContent = ({data, mockData}) => {
     console.log("barMockData")
     return (
         <div className="diagram-content">
+            <div className="diagram-content-date">
+                    {dateArray.map((item, index) => {
+                        return (
+                            <div  className="diagram-content-date-item" onChange={e => console.log('checkbox', e)}>
+                                <div>8</div><div>Aug</div>
+                            </div>
+                        )
+                    })}
+            </div>
+            <div className="diagram-content-box">
             <DiagramLineChart data={data}/>
             <DiagramBarChart data={barMockData}/>
+            </div>
         </div>
     )
 }
@@ -109,7 +122,7 @@ const DiagramLineChart = ({data}) => {
     }, [])
     return (
         <div className="diagram-lineChart">
-            <div className="diagram-lineChart-title">本月</div>
+            <div className="diagram-lineChart-title">日均消费</div>
             <svg className="diagram-svg_line" id="svg-line"></svg>
         </div>
     )
@@ -117,6 +130,7 @@ const DiagramLineChart = ({data}) => {
 
 const drawLineChart = (dataY) => {
     // d3.select("#svg-line").removeChild();
+    const lineColor = '#fae46d'
     const svgLine = document.querySelector("#svg-line")
     const width = svgLine.clientWidth;
     const height = svgLine.clientHeight;
@@ -149,19 +163,20 @@ const drawLineChart = (dataY) => {
     //     .call(d3.axisLeft(scale_y))
     g.append("g")
         .call(d3.axisBottom(scale_x))
-        .attr("transform","translate(0,"+g_height+")");
+        .attr("transform",`translate(0,${g_height+2})`);
     g.append("line")
         .attr("x1", scale_x(0))
-        .attr("y1", scale_y(d3.max(dataY)))
+        .attr("y1", scale_y(d3.max(dataY))-1)
         .attr("x2", g_width)
-        .attr("y2", scale_y(d3.max(dataY)))
-        .attr("stroke","#000")
-        .attr("stroke-width",1);
+        .attr("y2", scale_y(d3.max(dataY))-1)
+        .attr("class", "diagram-lineChart-line");
     g.append("text")
-        .text(d3.max(dataY)+' ¥')
+        .text(' ¥' + d3.max(dataY))
         .attr("transform",`translate(${g_width}, ${0})`)
         .attr("dy","-0.2em")
+        .attr("dx","0em")
         .attr("text-anchor","end")
+        .attr("class","diagram-lineChart-text");
 }
 const DiagramBarChart = ({data}) => {
 
@@ -195,8 +210,8 @@ const DiagramBarChart = ({data}) => {
         drawBarChart(barDataValue)
     },[])
     return (
-        <div>
-            <div id="diagram-bar-chart-segment"></div>
+        <div className="diagram-barChart">
+            <div className="diagram-barChart-title">排行榜</div>
             <svg id="svg-bar" className="diagram-svg_bar"></svg>
         </div>
     )
@@ -206,7 +221,7 @@ const drawBarChart = (initData) => {
     const svgBar = document.querySelector("#svg-bar")
     const width = svgBar.clientWidth;
     const itemHeight = 10
-    const paddingHeight = 80
+    const paddingHeight = 50
     const height = data.length * (itemHeight+paddingHeight);
     const height2 = data.length * itemHeight;
     d3.select("#svg-bar").attr("height", height);
@@ -219,19 +234,23 @@ const drawBarChart = (initData) => {
     // g.append("g")
     //     .call(d3.axisBottom(xScale))
     // const yAxis = d3.axisLeft(yScale);
+    const rectRadius = 5;
     data.forEach(d => {
         g.append('rect')
             .attr('width', xScale(d.value))
             .attr('height', itemHeight)
             .attr('fill', '#f5e279')
-            .attr("stroke-width", 0)
+            .attr("stroke-width", 5)
             .attr("x", margin.left)
-            .attr('y', yScale(d.name));
+            .attr('y', yScale(d.name))
+            .attr("rx", rectRadius)
+            .attr("ry", rectRadius);
         g.append("text")
             .attr("x",10)
             .attr('y', yScale(d.name))
             .attr('dy', "0.6em")
             .text(d.name)
+            .attr("class","diagram-lineChart-text")
         // g.append("symbol")
         //     .attr("class","icon-icon icon-canyin")
         //     .attr("id","icon-canyin")
