@@ -1,7 +1,8 @@
 import React,{useState, useContext} from "react";
 import {DataFresh, textType, textCountOut, textCountIn, textTypeIcon, formatDate, typeInOut} from "../../Config";
 import { createForm } from 'rc-form';
-import {fetchUrl} from "../FetchData"
+import {fetchUrl} from "../FetchData";
+import *as d3 from "d3";
 import {
     Tabs,
     WhiteSpace,
@@ -9,7 +10,7 @@ import {
     Icon,
     InputItem,
     List,
-    ActionSheet,
+    Toast,
     WingBlank,
     Modal,
     Button,
@@ -28,6 +29,15 @@ const tabs = [
 * ChargeInput 弹出的记账输入控件
 * 主要包括时间控件、两个输入组件、提交按钮 */
 const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, iconText}) => {
+
+    const isIPhone = new RegExp('\\biPhone\\b|\\biPod\\b', 'i').test(window.navigator.userAgent);
+    let moneyKeyboardWrapProps;
+    if (isIPhone) {
+        moneyKeyboardWrapProps = {
+            onTouchStart: e => e.preventDefault(),
+        };
+    }
+
     const {getFieldProps} = form;
     const nowTimeStamp = Date.now();
     const now = new Date(nowTimeStamp);
@@ -38,11 +48,58 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
 
     let history = useHistory()
     const {fresh, setFresh} = useContext(DataFresh);
+    const [hasError, setHasError] = useState(false)
+    const [numberValue, setNumberValue] = useState(0);
 
+
+
+    const isNumber = (intNumber) => {
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        if (regPos.test(intNumber) && regNeg.test(intNumber)) {
+            return true
+        } else {
+            return false
+        }
+    }
+    const onPhoneChange = (value) => {
+        console.log(value)
+        console.log("value")
+        // const intNumber = parseFloat(value);
+        // var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        // var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        // if(regPos.test(intNumber) && regNeg.test(intNumber)){
+        //     setHasError(true)
+        // }else{
+        //     setHasError(false)
+        // }
+    }
+    const onErrorClick = () => {
+        if (hasError) {
+            Toast.info('请输入正确的数字');
+        }
+    }
     const onSubmit = async () => {
-        onCloseModal();
-        console.log("form")
         let formData = form.getFieldsValue()
+        console.log("form")
+        console.log(formData)
+        let flag = 0;
+        if(!isNumber(parseFloat(formData["count"]))) {
+            const inputNum = document.querySelector("#charge-input-num")
+            inputNum.setAttribute("class","red-border");
+            Toast.info("请输入正确的信息")
+            flag = 1;
+        }
+        if(typeof(formData["description"]) == "undefined") {
+            const inputText = document.getElementById("charge-input-des")
+            console.log(inputText)
+            console.log("inputText")
+            inputText.setAttribute("class","red-border");
+            Toast.info("描述不能为空")
+            flag = 1;
+        }
+
+        if (flag) return ;
         formData["type"] = textInitType
         formData["date"] = dateStr
         formData["dateYear"] = yearStr
@@ -63,6 +120,7 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
         console.log(fresh)
         console.log("fresh")
         setFresh([!fresh[0]])
+        onCloseModal();
         // setFresh(!fresh)
     }
 
@@ -83,21 +141,31 @@ const ChargeInput = ({onCloseModal, form, initType, initTypeInOut, iconData, ico
                 </DatePicker>
             </div>
             <List>
-                <InputItem
-                    {...getFieldProps('description')}
-                    clear
-                    placeholder="输入描述"
-                >描述</InputItem>
-                <InputItem
-                    {...getFieldProps('count')}
-                    type="money"
-                    // defaultValue={100}
-                    placeholder="输入金额"
-                    clear
-                    moneyKeyboardAlign="left"
-                >金额</InputItem>
+                <div id="charge-input-des">
+                    <InputItem
+                        {...getFieldProps('description')}
+                        clear
+                        placeholder="输入描述"
+                        defaultValue=""
+                    >描述</InputItem>
+                </div>
+                <div  id="charge-input-num" className="non-red-border">
+                    <InputItem
+                        {...getFieldProps('money3')}
+                        // type='money'
+                        // error={hasError}
+                        // defaultValue={100}
+                        // onErrorClick={onErrorClick}
+                        placeholder="输入金额"
+                        clear
+                        // onChange={(v) => { console.log('onChange', v); }}
+                        // moneyKeyboardAlign="left"
+                        // moneyKeyboardWrapProps={moneyKeyboardWrapProps}
+                    >金额</InputItem>
+                </div>
+
             </List>
-            <Button onClick={onSubmit}>确认</Button>
+            <Button onClick={onSubmit} className="charge-input-submit">确认</Button>
         </form>
     )
 }
