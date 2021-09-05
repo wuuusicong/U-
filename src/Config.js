@@ -28,6 +28,8 @@ const saveData = async (url) => {
     console.log("saveData成功")
 }
 
+
+
 const formatInOut = (item) => {
     let formatInOutStr = "";
     if(item["typeInOut"]==="支出"){
@@ -92,7 +94,17 @@ const DetailNoData = () =>{
     </div>
 }
 
-const fetchUrl = {"save": 'https://qcluj6.fn.thelarkcloud.com/hello', "data": "https://qcluj6.fn.thelarkcloud.com/getAccountData"}
+const fetchUrl =
+    {
+        "save": 'https://qcluj6.fn.thelarkcloud.com/hello',
+        "data": "https://qcluj6.fn.thelarkcloud.com/getAccountData",
+        "delete": "https://qcluj6.fn.thelarkcloud.com/deleteItem",
+        "edit": "https://qcluj6.fn.thelarkcloud.com/editItem"
+    }
+
+const commonAxios = async (url, params) => {
+    await axios.post(url, params)
+}
 export {
     textApp,
     textCountIn,
@@ -111,5 +123,6 @@ export {
     DataFresh,
     footerIcon,
     sortData,
-    DetailNoData
+    DetailNoData,
+    commonAxios
 }

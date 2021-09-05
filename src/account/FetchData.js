@@ -1,6 +1,12 @@
 import axios from "axios";
 
-const fetchUrl = {"save": 'https://qcluj6.fn.thelarkcloud.com/hello', "data": "https://qcluj6.fn.thelarkcloud.com/getAccountData"}
+const fetchUrl =
+    {
+        "save": 'https://qcluj6.fn.thelarkcloud.com/hello',
+        "data": "https://qcluj6.fn.thelarkcloud.com/getAccountData",
+        "delete": "https://qcluj6.fn.thelarkcloud.com/deleteItem",
+        "edit": "https://qcluj6.fn.thelarkcloud.com/editItem"
+    }
 
 
 const fetchData = async (setData, date) => {
