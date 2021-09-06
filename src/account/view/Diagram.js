@@ -1,8 +1,8 @@
 import React, {useState, useContext, useEffect}from "react";
 import {textCountOut, textCountIn, formatDate, DataFresh, formatData, DetailNoData} from "../../Config";
-import {Radio, SegmentedControl} from "antd-mobile";
+import {Button, Radio, SegmentedControl} from "antd-mobile";
 import {tintColor} from "./Diagram.scss"
-import {fetchData} from "../FetchData";
+import {fetchAllData} from "../FetchData";
 import *as d3 from "d3";
 
 
@@ -18,9 +18,46 @@ const Diagram = () => {
 
     let [mockData, setMockData] = useState({});
 
+    const [initSelectPeriod, setInitSelectPeriod] = useState(1)
+
+
+    const DiagramHeader = ({typeInOut, typePeriod}) => {
+        const tintColor = '#9a9a96';
+
+
+
+        const onChange = (e) => {
+            console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
+        }
+        const onValueChange = (value) => {
+            console.log(value);
+        }
+        return (
+            <div className="diagram-header">
+                <SegmentedControl
+                    values={typeInOut}
+                    onChange={onChange}
+                    onValueChange={onValueChange}
+                    tintColor={tintColor}
+                    className= "diagram-header_inout"
+                />
+                <SegmentedControl
+                    values={typePeriod}
+                    onChange={onChange}
+                    onValueChange={onValueChange}
+                    selectedIndex={initSelectPeriod}
+                    tintColor={tintColor}
+                    className= "diagram-header_period"
+                />
+            </div>
+        )
+    }
+
+    const dataParams = {"dateYear":yearStr, "dateMonth":monthStr}
+
 
     useEffect(() => {
-        fetchData(setMockData,{"dateYear":yearStr, "dateMonth":monthStr})
+        fetchAllData(setMockData)
     }, [])
     const dataResult = formatData(mockData)
     const dateResultLength = Object.keys(dataResult).length;
@@ -34,52 +71,50 @@ const Diagram = () => {
     )
 }
 
-const DiagramHeader = ({typeInOut, typePeriod}) => {
-    const tintColor = '#9a9a96';
 
-    const onChange = (e) => {
-        console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
-    }
-    const onValueChange = (value) => {
-        console.log(value);
-    }
-    return (
-        <div className="diagram-header">
-            <SegmentedControl
-                values={typeInOut}
-                onChange={onChange}
-                onValueChange={onValueChange}
-                tintColor={tintColor}
-                className= "diagram-header_inout"
-            />
-            <SegmentedControl
-                values={typePeriod}
-                onChange={onChange}
-                onValueChange={onValueChange}
-                selectedIndex={1}
-                tintColor={tintColor}
-                className= "diagram-header_period"
-            />
-        </div>
-    )
-}
 const DiagramContent = ({data, mockData}) => {
-    const dateArray = [{"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}]
+
+    const dateToEn = {"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}
+    const monthData = mockData.map((item, index) => {
+        return item["dateMonth"]
+    })
+
+    console.log(monthData)
+    console.log("monthData")
+    const dateArray = Array.from(new Set(monthData)).map((item, index) => {
+        return {
+            "date":item,"en":dateToEn[item]
+        }
+    })
+    console.log(dateArray)
+
+    const [initSelectTerm, setInitSelectTerm] = useState(dateArray.length-1)
+
+    // const dateArray = [{"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}]
+
     const filterData = (mockData, filter) => {
         return mockData.filter((item, index) => {
             return item[filter["type"]] === filter["value"]
         })
     }
+    const onClickDiv = (v, index) => {
+        setInitSelectTerm(index)
+        // textInitType = textType[textTypeIconOut][textTypeIconOut.indexOf(initType)]
+    }
     const barMockData = filterData(mockData, {"type":"typeInOut", "value":"支出"})
-    console.log(barMockData)
-    console.log("barMockData")
+    console.log(initSelectTerm)
+    console.log("initSelectTerm")
     return (
         <div className="diagram-content">
             <div className="diagram-content-date">
                     {dateArray.map((item, index) => {
                         return (
-                            <div  className="diagram-content-date-item" onChange={e => console.log('checkbox', e)}>
-                                <div>8</div><div>Aug</div>
+                            <div  className="diagram-content-date-item"
+                                  style={{ backgroundColor: index === initSelectTerm ? "red" : "" }}
+                                  onClick={(e) => onClickDiv(e, index)}
+                                  data-index={index}
+                            >
+                                <div>{item["date"]}</div><div>{item["en"]}</div>
                             </div>
                         )
                     })}
