@@ -23,9 +23,6 @@ const Diagram = () => {
 
     const DiagramHeader = ({typeInOut, typePeriod}) => {
         const tintColor = '#9a9a96';
-
-
-
         const onChange = (e) => {
             console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
         }
@@ -59,25 +56,30 @@ const Diagram = () => {
     useEffect(() => {
         fetchAllData(setMockData)
     }, [])
-    const dataResult = formatData(mockData)
-    const dateResultLength = Object.keys(dataResult).length;
 
+    //判断mockData 是否为0
+    const mockDataLength = Object.keys(mockData).length
     return (
         <div className="diagram-container">
 
             <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod}/>
-            {dateResultLength!==0? <DiagramContent data={dataResult} mockData={mockData}/>:<DetailNoData/>}
+            {mockDataLength!==0? <DiagramContentMonth mockData={mockData} initSelectItem={initSelectPeriod}/>:<DetailNoData/>}
         </div>
     )
 }
 
 
-const DiagramContent = ({data, mockData}) => {
-
-    const dateToEn = {"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}
+const DiagramContentMonth = ({mockData, initSelectItem}) => {
     const monthData = mockData.map((item, index) => {
         return item["dateMonth"]
     })
+
+
+
+
+    // const data = formatData(mockData)
+    const dateToEn = {"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}
+
 
     console.log(monthData)
     console.log("monthData")
@@ -87,6 +89,65 @@ const DiagramContent = ({data, mockData}) => {
         }
     })
     console.log(dateArray)
+
+    const [initSelectTerm, setInitSelectTerm] = useState(dateArray.length-1)
+
+    const dataArrayDiagram = Array.from(new Set(monthData)).map((item, index) => {
+        const monthData = mockData.filter((item2, index) => {
+            return item2["dateMonth"] === item;
+        });
+        return  <DiagramContent mockData={monthData} index={initSelectTerm}/>
+    })
+    console.log("dataArray")
+    console.log(dataArrayDiagram)
+
+    const onClickDiv = (v, index) => {
+        setInitSelectTerm(index)
+        // setData1(getMonthData(monthData[initSelectTerm]))
+    }
+
+    return (
+        <div className="diagram-content">
+            <div className="diagram-content-date">
+                {dateArray.map((item, index) => {
+                    return (
+                        <div  className="diagram-content-date-item"
+                              style={{ backgroundColor: index === initSelectTerm ? "#181c28" : "",
+                                  color: index === initSelectTerm?"white":"black"}}
+                              onClick={(e) => onClickDiv(e, index)}
+                              data-index={index}
+                        >
+                            <div>{item["date"]}</div><div>{item["en"]}</div>
+                        </div>
+                    )
+                })}
+            </div>
+            {dataArrayDiagram[initSelectTerm]}
+        </div>
+    )
+
+}
+
+const DiagramContent = ({mockData, index}) => {
+
+    console.log(index)
+
+    console.log(mockData)
+    console.log("mockData")
+    console.log("进入的mockData在哪？")
+
+    const data = formatData(mockData)
+    const dateToEn = {"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}
+    const monthData = mockData.map((item, index) => {
+        return item["dateMonth"]
+    })
+
+
+    const dateArray = Array.from(new Set(monthData)).map((item, index) => {
+        return {
+            "date":item,"en":dateToEn[item]
+        }
+    })
 
     const [initSelectTerm, setInitSelectTerm] = useState(dateArray.length-1)
 
@@ -105,29 +166,14 @@ const DiagramContent = ({data, mockData}) => {
     console.log(initSelectTerm)
     console.log("initSelectTerm")
     return (
-        <div className="diagram-content">
-            <div className="diagram-content-date">
-                    {dateArray.map((item, index) => {
-                        return (
-                            <div  className="diagram-content-date-item"
-                                  style={{ backgroundColor: index === initSelectTerm ? "red" : "" }}
-                                  onClick={(e) => onClickDiv(e, index)}
-                                  data-index={index}
-                            >
-                                <div>{item["date"]}</div><div>{item["en"]}</div>
-                            </div>
-                        )
-                    })}
-            </div>
             <div className="diagram-content-box">
-            <DiagramLineChart data={data}/>
-            <DiagramBarChart data={barMockData}/>
+            <DiagramLineChart data={data} index={index}/>
+            <DiagramBarChart data={barMockData} index={index}/>
             </div>
-        </div>
     )
 }
 
-const DiagramLineChart = ({data}) => {
+const DiagramLineChart = ({data, index}) => {
     const getDateY = (data) => {
         const nowTimeStamp = Date.now();
         let tmpDate = new Date(nowTimeStamp);
@@ -154,7 +200,7 @@ const DiagramLineChart = ({data}) => {
 
     useEffect(() => {
         drawLineChart(dataY)
-    }, [])
+    }, [index])
     return (
         <div className="diagram-lineChart">
             <div className="diagram-lineChart-title">日均消费</div>
@@ -167,6 +213,7 @@ const drawLineChart = (dataY) => {
     // d3.select("#svg-line").removeChild();
     const lineColor = '#fae46d'
     const svgLine = document.querySelector("#svg-line")
+    d3.select("#svg-line").selectAll("*").remove();
     const width = svgLine.clientWidth;
     const height = svgLine.clientHeight;
     const margin = {left:10, right:10, top:20, bottom:20}
@@ -213,7 +260,7 @@ const drawLineChart = (dataY) => {
         .attr("text-anchor","end")
         .attr("class","diagram-lineChart-text");
 }
-const DiagramBarChart = ({data}) => {
+const DiagramBarChart = ({data, index}) => {
 
     const barData = (data) => {
         let dataType = [];
@@ -243,7 +290,7 @@ const DiagramBarChart = ({data}) => {
     const barDataValue = barData(data)
     useEffect(() => {
         drawBarChart(barDataValue)
-    },[])
+    },[index])
     return (
         <div className="diagram-barChart">
             <div className="diagram-barChart-title">排行榜</div>
@@ -254,11 +301,12 @@ const DiagramBarChart = ({data}) => {
 const drawBarChart = (initData) => {
     const data = initData.sort((a, b) => b.value - a.value);
     const svgBar = document.querySelector("#svg-bar")
+    d3.select("#svg-bar").selectAll("*").remove();
     const width = svgBar.clientWidth;
     const itemHeight = 10
     const paddingHeight = 50
     const height = data.length * (itemHeight+paddingHeight);
-    const height2 = data.length * itemHeight;
+    // const height2 = data.length * itemHeight;
     d3.select("#svg-bar").attr("height", height);
     const margin = {left:50, right:30, top:20, bottom:20}
     const innerWidth = width - margin.left - margin.right;
