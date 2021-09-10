@@ -39,6 +39,7 @@ $svg-bg-color: #ffffff;
   @include flex-direction-column;
   justify-content: center;
   align-items: center;
+  margin: auto;
 }
 .diagram-header {
   background: $blueBlack-header-color;

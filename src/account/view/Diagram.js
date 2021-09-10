@@ -6,11 +6,13 @@ import {fetchAllData} from "../FetchData";
 import *as d3 from "d3";
 
 
+const DiagramSelect = React.createContext({});
 
 const Diagram = () => {
     const typeInOut = [textCountOut, textCountIn];
-    const typePeriod = ["周", "月", "年"]
-    const typeDate = {"周":["本周", "上周", "其他"], "月":["本月", "上月", "其他"]}
+    const typePeriod = ["年","月"]
+    const dateLimit = 2
+    const typeDate = {"年":["今年", "去年"], "月":["本月", "上月"]}
     const nowTimeStamp = Date.now();
     const now = new Date(nowTimeStamp);
     let [detailDate, setDetailDate] = useState(now)
@@ -18,88 +20,159 @@ const Diagram = () => {
 
     let [mockData, setMockData] = useState({});
 
-    const [initSelectPeriod, setInitSelectPeriod] = useState(1)
+    const [allSelectPeriod, setAllSelectPeriod] = useState([0, 0])
 
 
-    const DiagramHeader = ({typeInOut, typePeriod}) => {
+    const onChange = (e) => {
+        console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
+        const tmp = e.nativeEvent.selectedSegmentIndex
+        setAllSelectPeriod([allSelectPeriod[0], tmp])
+        console.log(allSelectPeriod)
+    }
+
+
+    const DiagramHeader = ({typeInOut, typePeriod, onChange}) => {
         const tintColor = '#9a9a96';
-        const onChange = (e) => {
-            console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
-        }
+
         const onValueChange = (value) => {
             console.log(value);
         }
         return (
-            <div className="diagram-header">
-                <SegmentedControl
-                    values={typeInOut}
-                    onChange={onChange}
-                    onValueChange={onValueChange}
-                    tintColor={tintColor}
-                    className= "diagram-header_inout"
-                />
-                <SegmentedControl
-                    values={typePeriod}
-                    onChange={onChange}
-                    onValueChange={onValueChange}
-                    selectedIndex={initSelectPeriod}
-                    tintColor={tintColor}
-                    className= "diagram-header_period"
-                />
-            </div>
+                <div className="diagram-header">
+                    <SegmentedControl
+                        values={typeInOut}
+                        selectedIndex={allSelectPeriod[0]}
+                        // onChange={onChange}
+                        // onValueChange={onValueChange}
+                        tintColor={tintColor}
+                        className= "diagram-header_inout"
+                    />
+                    <SegmentedControl
+                        values={typePeriod}
+                        onChange={onChange}
+                        onValueChange={onValueChange}
+                        selectedIndex={allSelectPeriod[1]}
+                        tintColor={tintColor}
+                        className= "diagram-header_period"
+                    />
+                </div>
+
         )
     }
-
-    const dataParams = {"dateYear":yearStr, "dateMonth":monthStr}
-
 
     useEffect(() => {
         fetchAllData(setMockData)
     }, [])
 
-    //判断mockData 是否为0
     const mockDataLength = Object.keys(mockData).length
-    return (
+    if(mockDataLength===0) return (
         <div className="diagram-container">
-
             <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod}/>
-            {mockDataLength!==0? <DiagramContentMonth mockData={mockData} initSelectItem={initSelectPeriod}/>:<DetailNoData/>}
+                <DetailNoData/>
         </div>
+    )
+
+    const dateToEn = [{"2021":"今年","2020":"去年"},{"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}]
+
+
+    const dateToDataParams = ["dateYear","dateMonth"]
+
+    const dateToData = typePeriod.map((itemAll, indexAll) => {
+        const monthData = mockData.map((item, index) => {
+            return item[dateToDataParams[indexAll]]
+        })
+        const dateArray = Array.from(new Set(monthData)).map((item, index) => {
+            return {
+                "date":item,"en":dateToEn[indexAll][item]
+            }
+        })
+        const dataArrayDiagram = Array.from(new Set(monthData)).map((item, index) => {
+            const monthData = mockData.filter((item2, index) => {
+                return item2[dateToDataParams[indexAll]] === item;
+            });
+            return monthData
+        })
+        return {
+            "mockData":dataArrayDiagram,
+            "dateArray":dateArray.slice(-dateLimit)
+        }
+    })
+
+
+
+
+    // console.log(monthData)
+    // console.log("monthData")
+    // const monthData = mockData.map((item, index) => {
+    //     return item["dateMonth"]
+    // })
+    //
+    // const dateArray = Array.from(new Set(monthData)).map((item, index) => {
+    //     return {
+    //         "date":item,"en":dateToEn[allSelectPeriod[1]][item]
+    //     }
+    // })
+    // console.log(dateArray)
+    // const dataArrayDiagram = Array.from(new Set(monthData)).map((item, index) => {
+    //     const monthData = mockData.filter((item2, index) => {
+    //         return item2["dateMonth"] === item;
+    //     });
+    //     return monthData
+    // })
+
+    //判断mockData 是否为0
+    console.log(dateToData)
+    console.log("dateToData")
+
+    // const dateToDataComponent = dateToData.map((item, index) => {
+    //     return <DiagramContentMonth
+    //
+    //         dateToData= {item}
+    //         // mockData={dataArrayDiagram}
+    //         // dateArray={dateArray.slice(-dateLimit)}
+    //     />
+    // })
+
+    return (
+        <DiagramSelect.Provider value={{allSelectPeriod, setAllSelectPeriod}}>
+        <div className="diagram-container">
+            <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod} onChange={onChange}/>
+             <DiagramContentMonth
+
+                                  dateToData={dateToData[allSelectPeriod[1]]}
+                                  dataLen = {dateToData[allSelectPeriod[1]].dateArray.length-1}
+                                  // mockData={dataArrayDiagram}
+                                  // dateArray={dateArray.slice(-dateLimit)}
+             />
+        </div>
+        </DiagramSelect.Provider>
     )
 }
 
 
-const DiagramContentMonth = ({mockData, initSelectItem}) => {
-    const monthData = mockData.map((item, index) => {
-        return item["dateMonth"]
-    })
+const DiagramContentMonth = ({dateToData, dataLen}) => {
 
 
-
+    const {mockData, dateArray} = dateToData
 
     // const data = formatData(mockData)
-    const dateToEn = {"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}
+    console.log("年和月的改变")
+    console.log(dateToData)
+    console.log(dataLen)
+
+    const [initSelectTerm, setInitSelectTerm] = useState(dataLen)
 
 
-    console.log(monthData)
-    console.log("monthData")
-    const dateArray = Array.from(new Set(monthData)).map((item, index) => {
-        return {
-            "date":item,"en":dateToEn[item]
-        }
-    })
-    console.log(dateArray)
-
-    const [initSelectTerm, setInitSelectTerm] = useState(dateArray.length-1)
-
-    const dataArrayDiagram = Array.from(new Set(monthData)).map((item, index) => {
-        const monthData = mockData.filter((item2, index) => {
-            return item2["dateMonth"] === item;
-        });
-        return  <DiagramContent mockData={monthData} index={initSelectTerm}/>
-    })
-    console.log("dataArray")
-    console.log(dataArrayDiagram)
+    console.log(initSelectTerm)
+    console.log("initSelectTerm")
+    // const dataArrayDiagram = dataTypeText.map((item, index) => {
+    //     const monthData = mockData.filter((item2, index) => {
+    //         return item2[type] === item;
+    //     });
+    //     return monthData
+    // })
+    // console.log("dataArray")
+    // console.log(dataArrayDiagram)
 
     const onClickDiv = (v, index) => {
         setInitSelectTerm(index)
@@ -112,8 +185,8 @@ const DiagramContentMonth = ({mockData, initSelectItem}) => {
                 {dateArray.map((item, index) => {
                     return (
                         <div  className="diagram-content-date-item"
-                              style={{ backgroundColor: index === initSelectTerm ? "#181c28" : "",
-                                  color: index === initSelectTerm?"white":"black"}}
+                              style={{ backgroundColor: index === dataLen ? "#181c28" : "",
+                                  color: index === dataLen?"white":"black"}}
                               onClick={(e) => onClickDiv(e, index)}
                               data-index={index}
                         >
@@ -122,7 +195,8 @@ const DiagramContentMonth = ({mockData, initSelectItem}) => {
                     )
                 })}
             </div>
-            {dataArrayDiagram[initSelectTerm]}
+            {/*{dataArrayDiagram[initSelectTerm]}*/}
+            <DiagramContent mockData={mockData[dataLen]} index={dataLen}/>
         </div>
     )
 
@@ -130,9 +204,10 @@ const DiagramContentMonth = ({mockData, initSelectItem}) => {
 
 const DiagramContent = ({mockData, index}) => {
 
-    console.log(index)
-
+    // console.log(index)
+    //
     console.log(mockData)
+    console.log(index)
     console.log("mockData")
     console.log("进入的mockData在哪？")
 
