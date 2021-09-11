@@ -50,14 +50,14 @@ const formatDate = function (date) {
     return {yearStr, monthStr, dayStr, dateStr}
 }
 
-const formatData = (data) => {
+const formatData = (data, type="date") => {
     console.log(data)
-    console.log("data")
+    console.log("dataMonth")
     if(Object.keys(data).length===0)return {}
     let resultIndex = []
     let result = {}
     data.forEach((item, index) => {
-        resultIndex.push(item["date"])
+        resultIndex.push(item[type])
     })
     resultIndex = Array.from(new Set(resultIndex))
     console.log(resultIndex)
@@ -68,7 +68,7 @@ const formatData = (data) => {
         result[resultIndex[i]] = []
     }
     data.forEach((item, index) => {
-        result[item["date"]].push(item)
+        result[item[type]].push(item)
     })
     return result;
 }

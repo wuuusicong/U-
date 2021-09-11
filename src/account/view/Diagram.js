@@ -6,7 +6,9 @@ import {fetchAllData} from "../FetchData";
 import *as d3 from "d3";
 
 
-const DiagramSelect = React.createContext({});
+const DiagramSelect = React.createContext(null);
+
+const DiagramYearMonthSelect = React.createContext(null);
 
 const Diagram = () => {
     const typeInOut = [textCountOut, textCountIn];
@@ -15,19 +17,21 @@ const Diagram = () => {
     const typeDate = {"年":["今年", "去年"], "月":["本月", "上月"]}
     const nowTimeStamp = Date.now();
     const now = new Date(nowTimeStamp);
-    let [detailDate, setDetailDate] = useState(now)
-    let {yearStr, monthStr} = formatDate(detailDate)
+    // let [detailDate, setDetailDate] = useState(now)
+    // let {yearStr, monthStr} = formatDate(detailDate)
 
-    let [mockData, setMockData] = useState({});
+    let [mockData, setMockData] = useState([]);
 
-    const [allSelectPeriod, setAllSelectPeriod] = useState([0, 0])
+    const [allSelectPeriod, setAllSelectPeriod] = useState(0)
+    const [initSelectTerm, setInitSelectTerm] = useState(0)
 
 
     const onChange = (e) => {
-        console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
+        // console.log(`selectedIndex:${e.nativeEvent.selectedSegmentIndex}`);
         const tmp = e.nativeEvent.selectedSegmentIndex
-        setAllSelectPeriod([allSelectPeriod[0], tmp])
-        console.log(allSelectPeriod)
+        setAllSelectPeriod(tmp)
+        setInitSelectTerm(0)
+        // console.log(allSelectPeriod)
     }
 
 
@@ -35,13 +39,13 @@ const Diagram = () => {
         const tintColor = '#9a9a96';
 
         const onValueChange = (value) => {
-            console.log(value);
+            // console.log(value);
         }
         return (
                 <div className="diagram-header">
                     <SegmentedControl
                         values={typeInOut}
-                        selectedIndex={allSelectPeriod[0]}
+                        selectedIndex={0}
                         // onChange={onChange}
                         // onValueChange={onValueChange}
                         tintColor={tintColor}
@@ -51,7 +55,7 @@ const Diagram = () => {
                         values={typePeriod}
                         onChange={onChange}
                         onValueChange={onValueChange}
-                        selectedIndex={allSelectPeriod[1]}
+                        selectedIndex={allSelectPeriod}
                         tintColor={tintColor}
                         className= "diagram-header_period"
                     />
@@ -65,12 +69,6 @@ const Diagram = () => {
     }, [])
 
     const mockDataLength = Object.keys(mockData).length
-    if(mockDataLength===0) return (
-        <div className="diagram-container">
-            <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod}/>
-                <DetailNoData/>
-        </div>
-    )
 
     const dateToEn = [{"2021":"今年","2020":"去年"},{"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}]
 
@@ -94,7 +92,8 @@ const Diagram = () => {
         })
         return {
             "mockData":dataArrayDiagram,
-            "dateArray":dateArray.slice(-dateLimit)
+            "dateArray":dateArray.slice(-dateLimit),
+            "type":dateToDataParams[indexAll]
         }
     })
 
@@ -121,8 +120,8 @@ const Diagram = () => {
     // })
 
     //判断mockData 是否为0
-    console.log(dateToData)
-    console.log("dateToData")
+    // console.log(dateToData)
+    // console.log("dateToData")
 
     // const dateToDataComponent = dateToData.map((item, index) => {
     //     return <DiagramContentMonth
@@ -134,37 +133,40 @@ const Diagram = () => {
     // })
 
     return (
-        <DiagramSelect.Provider value={{allSelectPeriod, setAllSelectPeriod}}>
+        <DiagramYearMonthSelect.Provider value={{allSelectPeriod, setAllSelectPeriod}}>
+        <DiagramSelect.Provider value={{initSelectTerm, setInitSelectTerm}}>
         <div className="diagram-container">
             <DiagramHeader typeInOut={typeInOut} typePeriod={typePeriod} onChange={onChange}/>
+            {mockDataLength===0?<DetailNoData/>:
              <DiagramContentMonth
 
-                                  dateToData={dateToData[allSelectPeriod[1]]}
-                                  dataLen = {dateToData[allSelectPeriod[1]].dateArray.length-1}
+                                  dateToData={dateToData[allSelectPeriod]}
+                                  allSelect={allSelectPeriod}
                                   // mockData={dataArrayDiagram}
                                   // dateArray={dateArray.slice(-dateLimit)}
-             />
+             />  }
         </div>
         </DiagramSelect.Provider>
+        </DiagramYearMonthSelect.Provider>
     )
 }
 
 
-const DiagramContentMonth = ({dateToData, dataLen}) => {
+
+const DiagramContentMonth = ({dateToData, allSelect}) => {
 
 
     const {mockData, dateArray} = dateToData
 
     // const data = formatData(mockData)
+    console.log(allSelect)
+
+    const {initSelectTerm, setInitSelectTerm} = useContext(DiagramSelect)
+
     console.log("年和月的改变")
     console.log(dateToData)
-    console.log(dataLen)
-
-    const [initSelectTerm, setInitSelectTerm] = useState(dataLen)
-
-
-    console.log(initSelectTerm)
-    console.log("initSelectTerm")
+    // console.log(initSelectTerm)
+    // console.log("initSelectTerm")
     // const dataArrayDiagram = dataTypeText.map((item, index) => {
     //     const monthData = mockData.filter((item2, index) => {
     //         return item2[type] === item;
@@ -185,46 +187,54 @@ const DiagramContentMonth = ({dateToData, dataLen}) => {
                 {dateArray.map((item, index) => {
                     return (
                         <div  className="diagram-content-date-item"
-                              style={{ backgroundColor: index === dataLen ? "#181c28" : "",
-                                  color: index === dataLen?"white":"black"}}
+                              style={{ backgroundColor: index === initSelectTerm ? "#181c28" : "",
+                                  color: index === initSelectTerm?"white":"black"}}
                               onClick={(e) => onClickDiv(e, index)}
                               data-index={index}
                         >
-                            <div>{item["date"]}</div><div>{item["en"]}</div>
+                            <div>{item["date"]}</div>
+                            {/*<div>{item["en"]}</div>*/}
                         </div>
                     )
                 })}
             </div>
             {/*{dataArrayDiagram[initSelectTerm]}*/}
-            <DiagramContent mockData={mockData[dataLen]} index={dataLen}/>
+            <DiagramContent mockData={mockData[initSelectTerm]} index={initSelectTerm} date={dateArray[initSelectTerm]["date"]}/>
         </div>
     )
 
 }
 
-const DiagramContent = ({mockData, index}) => {
+const DiagramContent = ({mockData, index, date}) => {
 
     // console.log(index)
     //
-    console.log(mockData)
-    console.log(index)
-    console.log("mockData")
-    console.log("进入的mockData在哪？")
+    // console.log(mockData)
+    // console.log(index)
+    // console.log("mockData")
+    // console.log("进入的mockData在哪？")
 
-    const data = formatData(mockData)
-    const dateToEn = {"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}
-    const monthData = mockData.map((item, index) => {
-        return item["dateMonth"]
-    })
+    const {allSelectPeriod} = useContext(DiagramYearMonthSelect)
+    let data;
+    if(allSelectPeriod === 0){
+        data = formatData(mockData,"dateMonth")
+        console.log("year")
+        console.log(data)
+    }
+    else data = formatData(mockData)
+    // const dateToEn = {"07":"Jun","08":"Aug","09":"Sep","10":"Aug"}
+    // const monthData = mockData.map((item, index) => {
+    //     return item["dateMonth"]
+    // })
 
 
-    const dateArray = Array.from(new Set(monthData)).map((item, index) => {
-        return {
-            "date":item,"en":dateToEn[item]
-        }
-    })
+    // const dateArray = Array.from(new Set(monthData)).map((item, index) => {
+    //     return {
+    //         "date":item,"en":dateToEn[item]
+    //     }
+    // })
 
-    const [initSelectTerm, setInitSelectTerm] = useState(dateArray.length-1)
+    // const [initSelectTerm, setInitSelectTerm] = useState(dateArray.length-1)
 
     // const dateArray = [{"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}, {"date":"8","en":"Aug"}]
 
@@ -233,39 +243,66 @@ const DiagramContent = ({mockData, index}) => {
             return item[filter["type"]] === filter["value"]
         })
     }
-    const onClickDiv = (v, index) => {
-        setInitSelectTerm(index)
-        // textInitType = textType[textTypeIconOut][textTypeIconOut.indexOf(initType)]
-    }
+    // const onClickDiv = (v, index) => {
+    //     setInitSelectTerm(index)
+    //     // textInitType = textType[textTypeIconOut][textTypeIconOut.indexOf(initType)]
+    // }
     const barMockData = filterData(mockData, {"type":"typeInOut", "value":"支出"})
-    console.log(initSelectTerm)
-    console.log("initSelectTerm")
+    // console.log(initSelectTerm)
+    // console.log("initSelectTerm")
     return (
             <div className="diagram-content-box">
-            <DiagramLineChart data={data} index={index}/>
+            <DiagramLineChart data={data} index={index} date={date}/>
             <DiagramBarChart data={barMockData} index={index}/>
             </div>
     )
 }
 
-const DiagramLineChart = ({data, index}) => {
+const DiagramLineChart = ({data, index, date}) => {
+    const {allSelectPeriod} = useContext(DiagramYearMonthSelect)
+
+    console.log(data)
+    console.log(date)
+    console.log("lineChart")
+    let lineText;
+    if(allSelectPeriod === 0){
+        lineText = "月均消费"
+    }else lineText = "日均消费"
     const getDateY = (data) => {
-        const nowTimeStamp = Date.now();
-        let tmpDate = new Date(nowTimeStamp);
-        let tmpMonthLength = new Date(tmpDate.getFullYear(), tmpDate.getMonth()+1, 0).getDate();
-        // let dataX= [...new Array(tmpMonthLength).keys()]
-        let dataY = new Array(tmpMonthLength).fill(0);
-        Object.keys(data).forEach((item, index) => {
-            let itemNum = {"支出":0,"收入":0};
-            // console.log(item)
-            data[item].forEach((item2, index2) => {
-                itemNum[item2["typeInOut"]] += parseFloat(item2["count"])
+        let dataY;
+        if(allSelectPeriod === 0){
+             dataY = new Array(12).fill(0);
+            Object.keys(data).forEach((item, index) => {
+                let itemNum = {"支出":0,"收入":0};
+                // console.log(item)
+                data[item].forEach((item2, index2) => {
+                    itemNum[item2["typeInOut"]] += parseFloat(item2["count"])
+                })
+                let itemDay = parseInt(item);
+                dataY[itemDay] = itemNum["支出"]
+                // tmp[itemDay] = itemNum["支出"]
+                // return tmp
             })
-            let itemDay = parseInt(item.split("-")[2]);
-            dataY[itemDay] = itemNum["支出"]
-            // tmp[itemDay] = itemNum["支出"]
-            // return tmp
-        })
+        }else {
+            const nowTimeStamp = Date.now();
+            let tmpDate = new Date(nowTimeStamp);
+            let tmpMonthLength = new Date(tmpDate.getFullYear(), tmpDate.getMonth()+1, 0).getDate();
+            // let dataX= [...new Array(tmpMonthLength).keys()]
+             dataY = new Array(tmpMonthLength).fill(0);
+            Object.keys(data).forEach((item, index) => {
+                let itemNum = {"支出":0,"收入":0};
+                // console.log(item)
+                data[item].forEach((item2, index2) => {
+                    itemNum[item2["typeInOut"]] += parseFloat(item2["count"])
+                })
+                let itemDay = parseInt(item.split("-")[2]);
+                dataY[itemDay] = itemNum["支出"]
+                // tmp[itemDay] = itemNum["支出"]
+                // return tmp
+            })
+        }
+
+
         // console.log("data")
         // console.log(dataX)
         // console.log(dataY)
@@ -273,12 +310,14 @@ const DiagramLineChart = ({data, index}) => {
     }
     let dataY = getDateY(data)
 
+    console.log(dataY)
+    console.log("date")
     useEffect(() => {
         drawLineChart(dataY)
-    }, [index])
+    }, [data])
     return (
         <div className="diagram-lineChart">
-            <div className="diagram-lineChart-title">日均消费</div>
+            <div className="diagram-lineChart-title">{lineText}</div>
             <svg className="diagram-svg_line" id="svg-line"></svg>
         </div>
     )
@@ -315,11 +354,14 @@ const drawLineChart = (dataY) => {
         .curve(d3.curveMonotoneX);
     g.append("path")
         .attr("d",line_generator(dataY))
-        .attr("class","svg-line-path")
+        .attr("class","svg-line-path");
     // g.append("g")
     //     .call(d3.axisLeft(scale_y))
+    // let textScale_x =new Array(dataY.length).fill(0).map((item, index) => {
+    //     return (index+1);
+    // })
     g.append("g")
-        .call(d3.axisBottom(scale_x))
+        .call(d3.axisBottom(scale_x).tickFormat((d3.format("+1"))))
         .attr("transform",`translate(0,${g_height+2})`);
     g.append("line")
         .attr("x1", scale_x(0))
@@ -356,8 +398,8 @@ const DiagramBarChart = ({data, index}) => {
             sum += dataTypeObj[key];
             dataResult.push({"name": key, "value": dataTypeObj[key]})
         }
-        console.log(dataResult)
-        console.log("dataResult")
+        // console.log(dataResult)
+        // console.log("dataResult")
         return dataResult
     }
     // console.log(data)
@@ -365,7 +407,7 @@ const DiagramBarChart = ({data, index}) => {
     const barDataValue = barData(data)
     useEffect(() => {
         drawBarChart(barDataValue)
-    },[index])
+    },[data])
     return (
         <div className="diagram-barChart">
             <div className="diagram-barChart-title">排行榜</div>
