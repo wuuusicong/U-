@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# Demo
+
+![](UCount.gif)
+
 ## 字学镜像计划(前端篇)
 
 https://bytedance.feishu.cn/docs/doccnL6DMX5mZ09NBUNieilr87b#
